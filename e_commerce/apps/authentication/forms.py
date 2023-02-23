@@ -6,6 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import CustomUser
 
 
 class LoginForm(forms.Form):
@@ -26,6 +27,21 @@ class LoginForm(forms.Form):
 
 
 class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control"
+            }
+        ))
+    last_name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control"
+            }
+        ))
+    sponsorname = forms.ModelChoiceField(queryset=CustomUser.objects.all(), empty_label=None)
+        
+        
     username = forms.CharField(
         widget=forms.TextInput(
             attrs={
@@ -56,5 +72,5 @@ class SignUpForm(UserCreationForm):
         ))
 
     class Meta:
-        model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        model = CustomUser
+        fields = ('username', 'sponsorname', 'email', 'password1', 'password2', 'first_name', 'last_name')

@@ -7,7 +7,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm, SignUpForm
-
+from apps.authentication.models import CustomUser
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -34,7 +34,7 @@ def login_view(request):
 def register_user(request):
     msg = None
     success = False
-
+    result = CustomUser.objects.all()
     if request.method == "POST":
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -53,4 +53,5 @@ def register_user(request):
     else:
         form = SignUpForm()
 
-    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success})
+
+    return render(request, "accounts/register.html", {"form": form, "msg": msg, "success": success, 'value':8989,'sponsor' :result})
