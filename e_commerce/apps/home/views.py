@@ -8,9 +8,14 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.urls import reverse
+from django.urls import reverse         
 from apps.authentication.models import CustomUser
 from django.views.generic import View
+from django.views import View
+from .forms import ProductForm
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+from .models import Product
 
 
 @login_required(login_url="/login/")
@@ -87,3 +92,67 @@ def UserListView(request):
 
 
 
+
+
+
+
+
+@method_decorator(login_required(login_url="/login/"), name='dispatch')
+class register_product(View):
+    template_name = 'home/register_product.html'
+    context = {}
+
+
+    def get(self, request, *args, **kwargs):
+        self.context['form'] = ProductForm()
+
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+         form = ProductForm(request.POST, request.FILES)
+         print(form,'')
+         if form.is_valid():
+            form.save()  # Saves the form data to the database
+         return render(request, self.template_name, {'form': form})
+
+
+
+
+class ProductView(TemplateView):
+    template_name = 'home/view_product.html'
+    context = {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        mydata = Product.objects.all().values()
+        context['product'] = mydata
+        return context
+
+
+def delete(request, id):
+  
+  Product = Product.objects.get(id=id)
+  Product.delete()
+  return HttpResponseRedirect(reverse('product_view'))
+
+ 
+def update(request, id):
+  Products = Product.objects.get(id=id)
+  template = loader.get_template('update.html')
+  context = {
+    'Product': Products,
+  }
+  return HttpResponse(template.render(context, request))
+
+  
+def updaterecord(request, id):
+  name = request.POST['name']
+  description = request.POST['description']
+  price = request.POST['price']
+  image = request.POST['image']
+  member = Product.objects.get(id=id)
+  member.name = name
+  member.price = price
+  member.image = image
+  member.save()
+  return HttpResponseRedirect(reverse('index'))

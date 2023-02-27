@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  color: #555;
+}
+
+img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+</style>
+</head>
+<body>
+
+
+<table border='1'>
+<thead>
+  <tr>
+    <th>name</th>
+    <th>description</th>
+    <th>price</th>
+    <th>image</th>
+  </tr>
+</thead>
+<tbody>
+  {% for x in product %}
+    <tr>
+      <td>{{ x.name}}</td>
+      <td>{{ x.description }}</td>
+      <td>{{ x.price }}</td>
+      <td> <img src= '/media/{{ x.image}}'></td>
+      <td><a href="/delete/{{x.id}}">delete</a>
+        <a href="/update/{{ x.id }}">edit</a></td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+
+
+</body>
+</html>
