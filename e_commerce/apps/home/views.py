@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django import template
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -59,10 +59,31 @@ def pages(request):
 
 
 @login_required(login_url="/login/")
+
+
 def UserListView(request):
-    users = CustomUser.objects.all()
-    context = {'users': users,'segments':'userlist'}    
-    return render(request, 'home/user_list.html', context)
+    print(request)
+    if request.method == 'POST':
+        # Get the list of user IDs from the form data
+        user_ids = request.POST.getlist('user')
+        user_id = request.POST.getlist('user1')
+        action = request.POST.get('action')
+        if action == 'block':
+        
+        # Deactivate each user with the corresponding ID
+            CustomUser.objects.filter(id__in=user_ids).update(is_active=False)
+        elif action == 'unblock':
+            CustomUser.objects.filter(id__in=user_id).update(is_active=True)
+        # Redirect back to the user list
+        return redirect('userlist')
     
+    else:
+        active = CustomUser.objects.filter(is_active= True)
+        blocked = CustomUser.objects.filter(is_active= False)
+        context = {'active': active,'blocked': blocked, 'segments':'userlist'}    
+        return render(request, 'home/user_list.html', context)
+
+
+
 
 
