@@ -100,7 +100,7 @@ def UserListView(request):
 @method_decorator(login_required(login_url="/login/"), name='dispatch')
 class register_product(View):
     template_name = 'home/register_product.html'
-    context = {}
+    context = {'segments':'register product'}
 
 
     def get(self, request, *args, **kwargs):
