@@ -21,21 +21,21 @@
               <p>User Profile</p>
             </a>
           </li>
-          <li class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
-            <a class="nav-link" href="/ui-tables.html">
-              <i class="material-icons">content_paste</i>
-              <p>Table List</p>
+          <li class="nav-item {% if 'coupon' in segments %} active {% endif %}">
+            <a class="nav-link" href="{% url 'coupon_list' %}">
+              <i class="material-icons">card_giftcard</i>
+              <p>Coupon</p>
             </a>
           </li>
           <li class="nav-item {% if 'register product' in segments %} active {% endif %}">
             <a class="nav-link" href="{% url 'register_product' %}">
-              <i class="material-icons">library_books</i>
+              <i class="material-icons">production_quantity_limits</i>
               <p>Manage Products</p>
             </a>
           </li>
           <li class="nav-item {% if 'userlist' in segments %} active {% endif %}">
             <a class="nav-link" href="{% url 'userlist' %}">
-              <i class="material-icons">bubble_chart</i>
+              <i class="material-icons">groups</i>
               <p>user list</p>
             </a>
           </li>

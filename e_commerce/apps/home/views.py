@@ -16,11 +16,13 @@ from .forms import ProductForm
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from .models import Product
+from wallet.models import UserWallet
 
 
 @login_required(login_url="/login/")
 def index(request):
-    context = {'segment': 'index'}
+    user = UserWallet.objects.get(user=request.user)
+    context = {'segment': 'index', 'balance': user.balance}
 
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))
@@ -67,7 +69,6 @@ def pages(request):
 
 
 def UserListView(request):
-    print(request)
     if request.method == 'POST':
         # Get the list of user IDs from the form data
         user_ids = request.POST.getlist('user')

@@ -16,8 +16,4 @@ class CustomUser(AbstractUser):
     sponsorname = models.CharField(max_length=64)
 
 
-class userDetails(models.Model):
-    user =models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=True)
-
 

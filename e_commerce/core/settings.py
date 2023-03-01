@@ -34,7 +34,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.home',  # Enable the inner home (home)
-    'apps.authentication'
+    'apps.authentication',
+
+    'wallet'
 ]
 
 AUTH_USER_MODEL='authentication.CustomUser'

@@ -1,0 +1,21 @@
+
+{% extends "layouts/base.html" %}
+
+
+
+{% block content %}
+  <h1>Generate Coupon</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="discount_amount">Discount Amount:</label>
+      <input type="text" name="discount_amount">
+    </div>
+    <div>
+      <label for="expiration_date">Expiration Date:</label>
+      <input type="date" name="expiration_date">
+    </div>
+    <button type="submit">Generate</button>
+  </form>
+  {% endblock content %}
+

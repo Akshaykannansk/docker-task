@@ -1,0 +1,56 @@
+
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<a href="{% url 'generate_coupons' %}">Generate Coupon</a>
+  <h1>Coupon List</h1>
+  <div class="card"> 
+  <div class="table-responsive"> 
+  <table class="table">
+    <thead class="text-primary">
+      <tr>
+        <th>Code</th>
+        <th>Discount Amount</th>
+        <th>Expiration Date</th>
+        <th>Used</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for coupon in coupons %}
+        <tr>
+          <td>{{ coupon.code }}</td>
+          <td>{{ coupon.discount_amount }}</td>
+          <td>{{ coupon.expiration_date }}</td>
+          <td>{% if coupon.is_used %}Yes{% else %}No{% endif %}</td>
+          <td>
+            <a href="{% url 'use_coupon' coupon.id %}">Mark as Used</a>
+            <a href="{% url 'delete_coupon' coupon.id %}">Delete</a>
+            <button onclick="copy('{{ coupon.code }}','#copy_button')" id="copy_button" >Copy</button> 
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+function copy(text, target) {
+    setTimeout(function() {
+    $('#copied_tip').remove();
+    }, 800);
+    $(target).append("<div class='tip' id='copied_tip'>Copied!</div>");
+    var input = document.createElement('input');
+    input.setAttribute('value', text);
+    document.body.appendChild(input);
+    input.select();
+    var result = document.execCommand('copy');
+    document.body.removeChild(input)
+    return result;
+    }
+</script>
+
+{% endblock javascripts %}
