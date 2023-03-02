@@ -14,6 +14,17 @@ from django.dispatch import receiver
 
 class CustomUser(AbstractUser):
     sponsorname = models.CharField(max_length=64)
+    #to save the data
+    def register(self):
+        self.save()
+
+
+    @staticmethod
+    def get_customer_by_email(email):
+        try:
+            return CustomUser.objects.get(email= email)
+        except:
+            return False
 
 
 

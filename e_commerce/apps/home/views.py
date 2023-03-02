@@ -131,20 +131,18 @@ class ProductView(TemplateView):
 
 
 def delete(request, id):
-  
-  Product = Product.objects.get(id=id)
-  Product.delete()
+  del_Product = Product.objects.get(id=id)
+  del_Product.delete()
   return HttpResponseRedirect(reverse('product_view'))
 
  
 def update(request, id):
   Products = Product.objects.get(id=id)
-  template = loader.get_template('update.html')
   context = {
     'Product': Products,
   }
-  return HttpResponse(template.render(context, request))
-
+  return render(request, 'home/update.html', context)
+    
   
 def updaterecord(request, id):
   name = request.POST['name']

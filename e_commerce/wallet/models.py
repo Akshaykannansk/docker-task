@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 
 class UserWallet(models.Model) :
-    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     balance = models.FloatField(default=0 )
 
 @receiver(post_save, sender=CustomUser)

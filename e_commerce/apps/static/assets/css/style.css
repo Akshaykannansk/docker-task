@@ -1,0 +1,42 @@
+/* Center the product list header */
+h1 {
+    text-align: center;
+  }
+  
+  /* Add some space between the product cards */
+  .card {
+    margin-bottom: 20px;
+  }
+  
+  /* Make the product card title a little larger */
+  .card-title {
+    font-size: 1.2rem;
+  }
+  
+  /* Make the product card text a little smaller */
+  .card-text {
+    font-size: 0.9rem;
+  }
+  
+  /* Add a little padding to the price and add to cart button */
+  .card-price,
+  .btn-outline-secondary {
+    padding: 0.5rem;
+  }
+  
+  /* Add a little border to the add to cart button */
+  .btn-outline-secondary {
+    border: 1px solid #6c757d;
+  }
+  
+  /* Add some hover effects to the add to cart button */
+  .btn-outline-secondary:hover {
+    background-color: #6c757d;
+    color: #fff;
+  }
+  
+  /* Add some margin to the bottom of the page */
+  body {
+    margin-bottom: 50px;
+  }
+  
