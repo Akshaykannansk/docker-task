@@ -62,17 +62,17 @@ def cart_view(request):
     }
     return render(request, 'shop/cart.html', context)
 
-class checkout(View):
-    template_name ='shop/checkout.html'
-    context = {}
+# class checkout(View):
+#     template_name ='shop/checkout.html'
+#     context = {}
 
-    def get(self, request):
-        user = request.user
-        user_cart = cart.objects.get(user=user)
-        cart_item = user_cart.cart.objects.all()
-        total_price = user_cart.get_cart_total()
-        context ={
-            'cart':  cart_item,
-            'total_price': total_price
-        }
-        return render(request,self.template_name,context)
+#     def get(self, request):
+#         user = request.user
+#         user_cart = cart.objects.get(user=user)
+#         cart_item = user_cart.cart.objects.all()
+#         total_price = user_cart.get_cart_total()
+#         context ={
+#             'cart':  cart_item,
+#             'total_price': total_price
+#         }
+#         return render(request,self.template_name,context)

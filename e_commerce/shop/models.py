@@ -12,8 +12,10 @@ class cart(models.Model):
 
     def get_cart_total(self):
         cart_items = self.cart_items.all()
-        total= sum([cart_item.get_product_price() for cart_item in cart_items])
-        return total
+        carttotal= sum([cart_item.get_product_price() for cart_item in cart_items])
+        self.total= carttotal
+        self.save()
+        return carttotal
     
    
 class CartItems(models.Model):

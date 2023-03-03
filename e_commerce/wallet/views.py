@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 import random, string
 from django.utils import timezone
 from .models import Coupon
+from django.contrib import messages
 # Create your views here.
 
 @login_required(login_url="/login/")
@@ -16,6 +17,7 @@ def FundDeposit(request):
            senderUser= CustomUser.objects.get(username=request.user.username)
            userget = UserWallet.objects.get(user= senderUser)
            userget.balance += float(amount)
+           
            userget.save()
            msg = "Transaction Success"
        except Exception as e:
@@ -23,7 +25,7 @@ def FundDeposit(request):
     return render(request,'home/fund-deposit.html',{"msg":msg})
            
 
-#------------------------------------------------- coupon generation function -----------------------------------
+#          -------------------------------------- coupon generation function -----------------------------------
 
 @login_required(login_url="/login/")
 def GenerateCoupons(request):
@@ -36,6 +38,8 @@ def GenerateCoupons(request):
         deductamount.save()
         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
         coupon = Coupon(code=code, discount_amount=discount_amount, expiration_date=expiration_date)
+        messages.success(request, "coupon generated")
+        messages.error(request, "some error occured")
         coupon.save()
         return redirect('coupon_list')
     return render(request, 'home/generate_coupon.html')

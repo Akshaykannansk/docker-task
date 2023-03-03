@@ -12,10 +12,10 @@ from django.urls import reverse
 from apps.authentication.models import CustomUser
 from django.views.generic import View
 from django.views import View
-from .forms import ProductForm
+from .forms import ProductForm, productCategory
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from .models import Product
+from .models import Product, product_category
 from wallet.models import UserWallet
 
 
@@ -99,6 +99,22 @@ def UserListView(request):
 
 
 @method_decorator(login_required(login_url="/login/"), name='dispatch')
+
+class ProductCategoryAdd(View):
+    template_name = 'home/add_product_category.html'
+    categories = product_category.objects.all()
+    context = {'segments':'product category', 'categories': categories}
+    def get(self, request, *args, **kwargs):
+        self.context['form'] = productCategory()
+        return render(request, self.template_name, self.context)
+    
+
+    def post(self, request, *args, **kwargs):
+         form = productCategory(request.POST)
+         if form.is_valid():
+            form.save()  # Saves the form data to the database
+         return render(request, self.template_name, {'form': form})
+@method_decorator(login_required(login_url="/login/"), name='dispatch')   
 class register_product(View):
     template_name = 'home/register_product.html'
     context = {'segments':'register product'}
@@ -133,7 +149,7 @@ class ProductView(TemplateView):
 def delete(request, id):
   del_Product = Product.objects.get(id=id)
   del_Product.delete()
-  return HttpResponseRedirect(reverse('product_view'))
+  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
  
 def update(request, id):

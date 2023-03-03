@@ -1,0 +1,48 @@
+{% extends "layouts/base.html" %}
+
+
+
+{% block content %}
+<form role="form" method="post" action="">
+                
+    {% csrf_token %} 
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="form-group">
+          <label class="bmd-label-floating">Add category</label>
+          {{ form.category_name }}
+        </div>
+      </div>
+    </div>
+    <input type="submit" value="Submit">
+</form>
+
+<div class="card"> 
+    
+    <div class="table-responsive"> 
+    <table class="table">
+      <thead class=" text-primary">
+          <tr>
+            <th>Select</th>
+            <th>category</th>
+            <th>Email</th>
+            <th>First name</th>
+            <th>Last name</th>
+          </tr>
+        </thead>
+        <tbody>
+         
+          {% for category in categories %}
+          <tr>
+            <td><input type="checkbox" name="user1" value="{{ category.id }}"></td>
+            <td>{{ category.category_name }}</td>
+            <td> <a href="{% url 'product_view' category.id %}" > products </a> </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    </div>
+
+    {% endblock content %}

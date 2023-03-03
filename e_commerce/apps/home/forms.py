@@ -11,3 +11,15 @@ class ProductForm(forms.ModelForm):
             'image': forms.ClearableFileInput(attrs={'multiple': True}),
             'category': forms.ModelChoiceField(queryset=product_category.objects.all())
         }
+class productCategory(forms.ModelForm):
+
+      
+    category_name = forms.CharField(  widget=forms.TextInput(
+            attrs={
+        
+                "class": "form-control"
+            }
+        ))
+    class Meta:
+        model = product_category
+        fields = ['category_name']
