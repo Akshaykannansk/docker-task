@@ -25,14 +25,12 @@ class shop(View):
 def add_to_cart(request,id):
     products = Product.objects.get(id=id)
     user = request.user
-    print(user,products,"========================================================================"
-    )
     Cart , _ = cart.objects.get_or_create(user=user,is_paid= False)
-    cart_item = CartItems.objects.create(product=products,cart=Cart)
-    Cart.save()
-    cart_item.save()
-    from django.urls import reverse
-    return HttpResponseRedirect(reverse("product_detail"))
+    cart_item, created = CartItems.objects.get_or_create(product=products, cart=Cart)
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 
@@ -40,3 +38,41 @@ def product_detail(request, id):
     products = Product.objects.get(id=id)
     context = {'product': products}
     return render(request, 'shop/product_detail.html', context)
+
+
+def remove_cart(request, id):
+    try:
+        cart_item = CartItems.objects.get(product__id=id)
+        cart_item.delete()
+    except Exception as e:
+        print(e)
+        pass
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+def cart_view(request):
+    user = request.user
+    user_cart = cart.objects.get(user=user)
+    cart_items = user_cart.cart_items.all()
+    total_price = user_cart.get_cart_total()
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price
+    }
+    return render(request, 'shop/cart.html', context)
+
+class checkout(View):
+    template_name ='shop/checkout.html'
+    context = {}
+
+    def get(self, request):
+        user = request.user
+        user_cart = cart.objects.get(user=user)
+        cart_item = user_cart.cart.objects.all()
+        total_price = user_cart.get_cart_total()
+        context ={
+            'cart':  cart_item,
+            'total_price': total_price
+        }
+        return render(request,self.template_name,context)

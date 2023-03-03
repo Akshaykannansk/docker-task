@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="my-4">My Cart</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.description }}</td>
+                        <td>{{ item.product.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.get_product_price }}</td>
+                        <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}"> delete </a></td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4"><strong>Total</strong></td>
+                    <td><strong>{{ total_price }}</strong></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="{% url 'checkout' %}" class="btn btn-success float-right">Buy</a>
+    </div>
+{% endblock %}
+
