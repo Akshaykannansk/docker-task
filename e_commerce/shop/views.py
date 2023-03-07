@@ -2,8 +2,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render , redirect
 from django.views import View
 from apps.home.models import Product
-from shop.models import CartItems , cart
+from shop.models import CartItems , cart ,Orders,Order_items
 from django.shortcuts import render, get_object_or_404
+from shop.forms import address_form
 
 
 
@@ -54,7 +55,7 @@ def remove_cart(request, id):
 def cart_view(request):
     user = request.user
     user_cart = cart.objects.get(user=user)
-    cart_items = user_cart.cart_items.all()
+    cart_items = user_cart.items.all()
     total_price = user_cart.get_cart_total()
     context = {
         'cart_items': cart_items,
@@ -62,17 +63,40 @@ def cart_view(request):
     }
     return render(request, 'shop/cart.html', context)
 
-# class checkout(View):
-#     template_name ='shop/checkout.html'
-#     context = {}
 
-#     def get(self, request):
-#         user = request.user
-#         user_cart = cart.objects.get(user=user)
-#         cart_item = user_cart.cart.objects.all()
-#         total_price = user_cart.get_cart_total()
-#         context ={
-#             'cart':  cart_item,
-#             'total_price': total_price
-#         }
-#         return render(request,self.template_name,context)
+class checkout(View):
+    template_name ='shop/checkout.html'
+    context = {}
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            'form' : address_form()
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+         form = address_form(request.POST)
+         if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
+
+
+            order = Orders.objects.create(user=request.user, address=address , total = total1 )
+            if request.user.cart:
+                cart_id = request.user.cart.values('id').first()['id']
+                cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                product = Product.objects.all()
+                for item in cart_items:
+                    product = Product.objects.filter(id=item.product_id).first()
+                    Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
+                cart_items.delete()
+                product.stock -= item.quantity
+                product.save()
+         return render(request, 'shop/checkout_success.html', {'order': order})
+    
+
+
+
+   

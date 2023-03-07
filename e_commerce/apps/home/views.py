@@ -114,7 +114,8 @@ class ProductCategoryAdd(View):
          if form.is_valid():
             form.save()  # Saves the form data to the database
          return render(request, self.template_name, {'form': form})
-@method_decorator(login_required(login_url="/login/"), name='dispatch')   
+    
+@method_decorator(login_required(login_url="/login/"), name='dispatch')  
 class register_product(View):
     template_name = 'home/register_product.html'
     context = {'segments':'register product'}

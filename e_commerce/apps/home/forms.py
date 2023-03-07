@@ -6,7 +6,7 @@ class ProductForm(forms.ModelForm):
         
         class Meta:
             model = Product
-            fields = ['name', 'description', 'price','image','product_category']
+            fields = ['name', 'description', 'price','image','product_category','stock']
             widgets = {
             'image': forms.ClearableFileInput(attrs={'multiple': True}),
             'category': forms.ModelChoiceField(queryset=product_category.objects.all())
