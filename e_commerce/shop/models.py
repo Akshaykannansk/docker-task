@@ -4,6 +4,7 @@ from apps.home.models import Product
 
 
 class address(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     address = models.CharField(max_length=50)
@@ -43,6 +44,7 @@ class Orders(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     address = models.ForeignKey(address, null=True, on_delete=models.SET_NULL)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    status = models.CharField(max_length= 25, default="pending")
 
 
 

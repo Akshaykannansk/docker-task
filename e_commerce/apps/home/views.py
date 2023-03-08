@@ -102,11 +102,15 @@ def UserListView(request):
 
 class ProductCategoryAdd(View):
     template_name = 'home/add_product_category.html'
-    categories = product_category.objects.all()
-    context = {'segments':'product category', 'categories': categories}
+    context = {}
     def get(self, request, *args, **kwargs):
-        self.context['form'] = productCategory()
-        return render(request, self.template_name, self.context)
+        categories = product_category.objects.all()
+        context = {
+            'segments':'product category', 
+            'categories': categories
+            }
+        context['form'] = productCategory()
+        return render(request, self.template_name, context)
     
 
     def post(self, request, *args, **kwargs):

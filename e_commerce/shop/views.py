@@ -4,7 +4,9 @@ from django.views import View
 from apps.home.models import Product
 from shop.models import CartItems , cart ,Orders,Order_items
 from django.shortcuts import render, get_object_or_404
-from shop.forms import address_form
+from shop.forms import *
+from wallet.models import *
+from django.contrib import messages
 
 
 
@@ -22,16 +24,27 @@ class shop(View):
 
 
 
-
-def add_to_cart(request,id):
-    products = Product.objects.get(id=id)
+def add_to_cart(request, id):
+    product = Product.objects.get(id=id)
     user = request.user
-    Cart , _ = cart.objects.get_or_create(user=user,is_paid= False)
-    cart_item, created = CartItems.objects.get_or_create(product=products, cart=Cart)
-    if not created:
-        cart_item.quantity += 1
-        cart_item.save()
+    
+    # Check if the product is in stock
+    if product.stock > 0:
+        cart1, _ = cart.objects.get_or_create(user=user, is_paid=False)
+        cart_item, created = CartItems.objects.get_or_create(product=product, cart=cart1)
+        
+        # Check if the cart item quantity is less than the product stock
+        if cart_item.quantity < product.stock:
+            if not created:
+                cart_item.quantity += 1
+                cart_item.save()
+        else:
+            messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
+    else:
+        messages.error(request, f"Sorry, {product.name} is currently out of stock.")
+        
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 
 
@@ -64,26 +77,64 @@ def cart_view(request):
     return render(request, 'shop/cart.html', context)
 
 
-class checkout(View):
-    template_name ='shop/checkout.html'
+
+class CheckoutAddress(View):
+    template_name ='shop/checkout_address.html'
     context = {}
+    def get(self, request, *args, **kwargs):
+        context ={ 'form' : address_form()}
+        return render(request, self.template_name, context)
+    
+    def post(self, request, *args, **kwargs):
+        form = address_form(request.POST)
+        if form.is_valid():
+             address = form.save(commit=False)
+             address.user = request.user
+             address.save()
+             total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
+                
+
+            #  order = Orders.objects.create(user=request.user, address=address , total = total1 )
+            #  if request.user.cart:
+            #      cart_id = request.user.cart.values('id').first()['id']
+            #      cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+            #      product = Product.objects.all()
+            #      for item in cart_items:
+            #          product = Product.objects.filter(id=item.product_id).first()
+            #          Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
+            #      cart_items.delete()
+            #      product.stock -= item.quantity
+            #      product.save()
+        return redirect('checkout_payment')
+
+
+
+class CheckoutPayment(View):
+    template_name ='shop/checkout_payment.html'
+    context = {}
+    wallet = UserWallet.objects.all()
 
     def get(self, request, *args, **kwargs):
+        total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
+        wallet = UserWallet.objects.get(user=request.user).balance
+        walletbalance = wallet - total1
         context = {
-            'form' : address_form()
+            'form' : payment_form(),
+            'wallet' : wallet,
+            'balance' : walletbalance
         }
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-         form = address_form(request.POST)
+         form = payment_form(request.POST)
+         total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
          if form.is_valid():
-            address = form.save(commit=False)
-            address.user = request.user
-            address.save()
-            total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
-
-
-            order = Orders.objects.create(user=request.user, address=address , total = total1 )
+            if form.cleaned_data['payment_type'] == 1:
+                wallet = UserWallet.objects.get(user=request.user)
+                wallet.balance = wallet.balance - total1
+                wallet.save()
+            Address = address.objects.get(user=request.user).first()
+            order = Orders.objects.create(user=request.user, address=Address , total = total1 )
             if request.user.cart:
                 cart_id = request.user.cart.values('id').first()['id']
                 cart_items = CartItems.objects.filter(cart_id = cart_id).all()
@@ -94,7 +145,8 @@ class checkout(View):
                 cart_items.delete()
                 product.stock -= item.quantity
                 product.save()
-         return render(request, 'shop/checkout_success.html', {'order': order})
+              
+         return render(request, 'shop/checkout_success.html')
     
 
 

@@ -1,8 +1,20 @@
 package main
 
-	
+import (
+	"database/sql"
+	"fmt"
+	_ "github.com/lib/pq"
+	"sync"
+	"time"
+)
 
-import "fmt"
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "psql"
+	dbname   = "golang"
+)
 
 	
 

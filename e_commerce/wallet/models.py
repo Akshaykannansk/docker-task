@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 class UserWallet(models.Model) :
     user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    balance = models.FloatField(default=0 )
+    balance = models.DecimalField(max_digits=7, decimal_places=2 )
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
