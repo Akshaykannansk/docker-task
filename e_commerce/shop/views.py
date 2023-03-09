@@ -7,7 +7,8 @@ from django.shortcuts import render, get_object_or_404
 from shop.forms import *
 from wallet.models import *
 from django.contrib import messages
-
+from django.utils import timezone
+from decimal import Decimal
 
 
 # Create your views here.
@@ -94,17 +95,17 @@ class CheckoutAddress(View):
              total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
                 
 
-            #  order = Orders.objects.create(user=request.user, address=address , total = total1 )
-            #  if request.user.cart:
-            #      cart_id = request.user.cart.values('id').first()['id']
-            #      cart_items = CartItems.objects.filter(cart_id = cart_id).all()
-            #      product = Product.objects.all()
-            #      for item in cart_items:
-            #          product = Product.objects.filter(id=item.product_id).first()
-            #          Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
-            #      cart_items.delete()
-            #      product.stock -= item.quantity
-            #      product.save()
+             order = Orders.objects.create(user=request.user, address=address , total = total1 )
+             if request.user.cart:
+                 cart_id = request.user.cart.values('id').first()['id']
+                 cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                 product = Product.objects.all()
+                 for item in cart_items:
+                     product = Product.objects.filter(id=item.product_id).first()
+                     Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
+                #  cart_items.delete()
+                #  product.stock -= item.quantity
+                #  product.save()
         return redirect('checkout_payment')
 
 
@@ -126,28 +127,61 @@ class CheckoutPayment(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-         form = payment_form(request.POST)
-         total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
-         if form.is_valid():
+        form = payment_form(request.POST)
+        total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
+        if form.is_valid():
             if form.cleaned_data['payment_type'] == 1:
                 wallet = UserWallet.objects.get(user=request.user)
                 wallet.balance = wallet.balance - total1
                 wallet.save()
-            Address = address.objects.get(user=request.user).first()
-            order = Orders.objects.create(user=request.user, address=Address , total = total1 )
-            if request.user.cart:
-                cart_id = request.user.cart.values('id').first()['id']
-                cart_items = CartItems.objects.filter(cart_id = cart_id).all()
-                product = Product.objects.all()
-                for item in cart_items:
-                    product = Product.objects.filter(id=item.product_id).first()
-                    Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
-                cart_items.delete()
-                product.stock -= item.quantity
-                product.save()
-              
-         return render(request, 'shop/checkout_success.html')
-    
+                order = Orders.objects.filter(user=request.user).last()
+                order.status = "fullfilled"
+                order.save()
+                if request.user.cart:
+                    cart_id = request.user.cart.values('id').first()['id']
+                    cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                    product = Product.objects.all()
+                    for item in cart_items:
+                        product = Product.objects.filter(id=item.product_id).first()
+                        cart_items.delete()
+                        product.stock -= item.quantity
+                        product.save()
+                return render(request, 'shop/checkout_success.html', {'order': order})
+            else:
+                code = request.POST['fname']
+                try:
+                    coupon = Coupon.objects.get(code=code)
+                    if coupon.is_used:
+                        error_message = "Coupon has already been used."
+                    elif coupon.expiration_date < timezone.now().date():
+                        error_message = "Coupon has expired."
+                    else:
+                        coupon.discount_amount  -= total1
+                        coupon.is_used = True
+                        coupon.save()
+                        order = Orders.objects.filter(user=request.user).last()
+                        order.status = "fullfilled"
+                        order.save()
+                        if request.user.cart:
+                            cart_id = request.user.cart.values('id').first()['id']
+                            cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                            product = Product.objects.all()
+                            for item in cart_items:
+                                product = Product.objects.filter(id=item.product_id).first()
+                                cart_items.delete()
+                                product.stock -= item.quantity
+                                product.save()
+                        return render(request, 'shop/checkout_success.html', {'order': order})
+                except Coupon.DoesNotExist:
+                    error_message = "Invalid coupon code."
+        
+            if 'error_message' in locals():
+                # Display error message to the user
+                return render(request, 'shop/checkout_success.html', {'form': form, 'error_message': error_message})
+        else:
+            return render(request, 'shop/checkout_success.html', {'form': form})
+
+
 
 
 
