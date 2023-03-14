@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render , redirect
 from django.views import View
 from apps.home.models import Product
-from shop.models import CartItems , cart ,Orders,Order_items
+from shop.models import *
 from django.shortcuts import render, get_object_or_404
 from shop.forms import *
 from wallet.models import *
@@ -27,28 +27,10 @@ class shop(View):
 
 
 
-def add_to_cart(request, id):
-    product = Product.objects.get(id=id)
+
 def add_to_cart(request, id):
     product = Product.objects.get(id=id)
     user = request.user
-    
-    # Check if the product is in stock
-    if product.stock > 0:
-        cart1, _ = cart.objects.get_or_create(user=user, is_paid=False)
-        cart_item, created = CartItems.objects.get_or_create(product=product, cart=cart1)
-        
-        # Check if the cart item quantity is less than the product stock
-        if cart_item.quantity < product.stock:
-            if not created:
-                cart_item.quantity += 1
-                cart_item.save()
-                messages.error(request, f" {product.name} is sucessfully added to the cart.")
-        else:
-            messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
-    else:
-        messages.error(request, f"Sorry, {product.name} is currently out of stock.")
-        
     
     # Check if the product is in stock
     if product.stock > 0:
@@ -79,14 +61,14 @@ def product_detail(request, id):
 
 def remove_cart(request, id):
     try:
-        cart_item = CartItems.objects.get(id=id)
-        cart_item.delete()
+        cart_item = CartItems.objects.get(product_id=id)
+        print(cart_item)
         messages.success(request, f" {cart_item.product.name} is sucessfully removed from the cart.")
         cart_item.delete()
     except Exception as e:
-        print(e)
+        print(e,"=============================================================" ,id)
         pass
-    return render(request, 'shop/cart.html')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def cart_view(request):

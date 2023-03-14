@@ -16,8 +16,6 @@ class address(models.Model):
     country = models.CharField(max_length=50)
  
 
-
-
 # Create your models here.
 class cart(models.Model):
     user = models.ForeignKey(CustomUser , on_delete=models.CASCADE, related_name='cart')
@@ -73,6 +71,7 @@ class bonuses(models.Model):
     @receiver(post_save, sender=CustomUser)
     def save_user_profile(sender, instance, **kwargs):
         instance.bonuses.save()
+
 
 
 

@@ -15,7 +15,7 @@ from django.views import View
 from .forms import ProductForm, productCategory
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from .models import Product, product_category
+from .models import *
 from wallet.models import UserWallet
 from django.contrib import messages
 
@@ -204,3 +204,18 @@ class UpdateProductView(View):
             messages.error(request, 'Error updating product.')
             context = {'form': form, 'product': product}
             return render(request, self.template_name, context) 
+
+
+
+class bonus(View):
+    template_name = "home/bonushistory.html"
+    context ={}
+    def get(self, request):
+        bonus = bonushistory.objects.all()
+        
+        # userbonus = bonushistory.objects.filter(sponsorid =request.user)
+        context = {
+            'bonus' : bonus,
+            # 'userbonus' : userbonus
+        }
+        return render(request, self.template_name, context)
