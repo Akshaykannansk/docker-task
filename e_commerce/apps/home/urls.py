@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.urls import path, re_path
 from apps.home import views
-from apps.home.views import register_product, ProductView,ProductCategoryAdd
+from apps.home.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -14,7 +14,7 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
-    path( 'view_product/<int:id>', ProductView.as_view(), name='product_view' ),
+    path( 'view_product/', ProductView.as_view(), name='product_view' ),
 
     # Matches any html file
     re_path('userlist/', views.UserListView, name='userlist'),
@@ -22,8 +22,9 @@ urlpatterns = [
     re_path( 'add_category/', ProductCategoryAdd.as_view(), name='add_category' ),
     #re_path(r'^.*\.*', views.pages, name='pages'), 
     path('delete/<int:id>', views.delete, name='delete'),
-    path('update/<int:id>', views.update, name='update'),
-    path('update/updaterecord/<int:id>', views.updaterecord, name='updaterecord'),
+    path('update/<int:product_id>/', UpdateProductView.as_view(), name='update_product'),
+    # path('update/<int:id>', views.update, name='update'),
+    # path('update/updaterecord/<int:id>', views.updaterecord, name='updaterecord'),
 ]
 
 

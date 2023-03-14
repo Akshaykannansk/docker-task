@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 class UserWallet(models.Model) :
     user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=7, decimal_places=2 )
+    balance = models.DecimalField(max_digits=7, decimal_places=2 ,default=0.00)
 
 @receiver(post_save, sender=CustomUser)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -17,7 +17,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=CustomUser)
 def save_user_profile(sender, instance, **kwargs):
     instance.userwallet.save()
-
+    
 
 #     ---------------------------------------------------------------- coupon ----------------------------------------------
 class Coupon(models.Model):

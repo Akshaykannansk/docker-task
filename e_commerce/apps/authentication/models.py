@@ -19,12 +19,5 @@ class CustomUser(AbstractUser):
         self.save()
 
 
-    @staticmethod
-    def get_customer_by_email(email):
-        try:
-            return CustomUser.objects.get(email= email)
-        except:
-            return False
-
-
+  
 

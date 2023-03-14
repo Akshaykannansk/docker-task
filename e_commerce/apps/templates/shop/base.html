@@ -1,7 +1,6 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
   <meta charset="utf-8" />
@@ -30,33 +29,37 @@
 
 </head>
 
-{% comment %} {% include "navbar.html" %} {% endcomment %}
+<body class="">
+  <div class="wrapper ">
 
-<body>
 
-    <div class="mt-5 pt-4">
-    {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+    {% comment %} <div class="main-panel"> {% endcomment %}
+
+      {% include 'includes/navigation.html' %}
+
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          {% include 'includes/messages.html' %}
+
+          {% block content %}{% endblock content %}
+
         </div>
-        {% endfor %}
-    {% endif %}
+      </div>
+
+      {% include 'includes/footer.html' %}
+
     </div>
+  </div>
 
-    {% block content %}
-    {% endblock content %}
+  
 
-    {% block extra_body %}
-    {% endblock %}
+  {% include 'includes/scripts.html' %}
 
-    {% comment %} {% include "footer.html" %}
-    {% include "scripts.html" %} {% endcomment %}
-
-    {% block extra_scripts %}
-    {% endblock extra_scripts %}
+  {% include 'includes/scripts-sidebar.html' %}
+  
+  <!-- Specific Page JS goes HERE  -->
+  {% block javascripts %}{% endblock javascripts %}
+  
 </body>
 </html>

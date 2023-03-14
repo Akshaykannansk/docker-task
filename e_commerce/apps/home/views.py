@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django import template
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -17,6 +17,8 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from .models import Product, product_category
 from wallet.models import UserWallet
+from django.contrib import messages
+
 
 
 @login_required(login_url="/login/")
@@ -99,7 +101,6 @@ def UserListView(request):
 
 
 @method_decorator(login_required(login_url="/login/"), name='dispatch')
-
 class ProductCategoryAdd(View):
     template_name = 'home/add_product_category.html'
     context = {}
@@ -112,7 +113,6 @@ class ProductCategoryAdd(View):
         context['form'] = productCategory()
         return render(request, self.template_name, context)
     
-
     def post(self, request, *args, **kwargs):
          form = productCategory(request.POST)
          if form.is_valid():
@@ -140,15 +140,19 @@ class register_product(View):
 
 
 
-class ProductView(TemplateView):
+class ProductView(View):
     template_name = 'home/view_product.html'
     context = {}
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        mydata = Product.objects.all().values()
-        context['product'] = mydata
-        return context
+    def get(self, request):
+        product = Product.objects.all()     
+        context ={
+            'products':product,
+            'segments':'view product'
+        }
+        return render(request,self.template_name,context)
+
+
 
 
 def delete(request, id):
@@ -157,22 +161,46 @@ def delete(request, id):
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
  
-def update(request, id):
-  Products = Product.objects.get(id=id)
-  context = {
-    'Product': Products,
-  }
-  return render(request, 'home/update.html', context)
+# def update(request, id):
+#   Products = Product.objects.get(id=id)
+#   context = {
+#     'Product': Products,
+#   }
+#   return render(request, 'home/update.html', context)
     
   
-def updaterecord(request, id):
-  name = request.POST['name']
-  description = request.POST['description']
-  price = request.POST['price']
-  image = request.POST['image']
-  member = Product.objects.get(id=id)
-  member.name = name
-  member.price = price
-  member.image = image
-  member.save()
-  return HttpResponseRedirect(reverse('index'))
+# def updaterecord(request, id):
+#   name = request.POST['name']
+#   description = request.POST['description']
+#   price = request.POST['price']
+#   image = request.POST['image']
+#   member = Product.objects.get(id=id)
+#   member.name = name
+#   member.price = price
+#   member.image = image
+#   member.save()
+#   return HttpResponseRedirect(reverse('index'))
+
+
+
+
+class UpdateProductView(View):
+    template_name = 'update_product_modal.html'
+
+    def get(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductForm(instance=product)
+        context = {'form': form, 'product': product}
+        return render(request, self.template_name, context)
+
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product updated successfully.')
+            return redirect('product_list')
+        else:
+            messages.error(request, 'Error updating product.')
+            context = {'form': form, 'product': product}
+            return render(request, self.template_name, context) 

@@ -20,7 +20,7 @@
                         <td>{{ item.product.name }}</td>
                         <td>{{ item.product.description }}</td>
                         <td>{{ item.product.price }}</td>
-                        <td>{{ item.quantity }}</td>
+                        <td>  <input type="number" step="1" max="{{item.product.stock}}" min ="1" value="{{ item.quantity }}" name="quantity" class="quantity-field border-0 text-center w-25"></td>
                         <td>{{ item.get_product_price }}</td>
                         <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}"> delete </a></td>
                     </tr>

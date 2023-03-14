@@ -4,7 +4,8 @@
   <div class="container mt-4">
     <h1>Checkout Successful!</h1>
     <p>Thank you for your order. Your payment has been processed successfully.</p>
-    <p>Your order ID is: 5758{{ order.id}}</p>
-    <p>Total amount paid: ${{ order.total }}</p>
+    <p>Your order ID is: 575{{ order.id}}</p>
+    <p>Total amount paid:₹{{ order.total }}</p>
+    <a class="btn btn-primary" type="button" href ="{% url 'shop' %}">Back to shop</a>
   </div>
 {% endblock content %}

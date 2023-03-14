@@ -1,3 +1,4 @@
+from audioop import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render , redirect
 from django.views import View
@@ -24,9 +25,29 @@ class shop(View):
 
 
 
+
+def add_to_cart(request, id):
+    product = Product.objects.get(id=id)
 def add_to_cart(request, id):
     product = Product.objects.get(id=id)
     user = request.user
+    
+    # Check if the product is in stock
+    if product.stock > 0:
+        cart1, _ = cart.objects.get_or_create(user=user, is_paid=False)
+        cart_item, created = CartItems.objects.get_or_create(product=product, cart=cart1)
+        
+        # Check if the cart item quantity is less than the product stock
+        if cart_item.quantity < product.stock:
+            if not created:
+                cart_item.quantity += 1
+                cart_item.save()
+                messages.error(request, f" {product.name} is sucessfully added to the cart.")
+        else:
+            messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
+    else:
+        messages.error(request, f"Sorry, {product.name} is currently out of stock.")
+        
     
     # Check if the product is in stock
     if product.stock > 0:
@@ -48,6 +69,7 @@ def add_to_cart(request, id):
 
 
 
+
 def product_detail(request, id):
     products = Product.objects.get(id=id)
     context = {'product': products}
@@ -56,13 +78,14 @@ def product_detail(request, id):
 
 def remove_cart(request, id):
     try:
-        cart_item = CartItems.objects.get(product__id=id)
+        cart_item = CartItems.objects.get(id=id)
+        cart_item.delete()
+        messages.success(request, f" {cart_item.product.name} is sucessfully removed from the cart.")
         cart_item.delete()
     except Exception as e:
         print(e)
         pass
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
+    return render(request, 'shop/cart.html')
 
 
 def cart_view(request):
@@ -70,9 +93,10 @@ def cart_view(request):
     user_cart = cart.objects.get(user=user)
     cart_items = user_cart.items.all()
     total_price = user_cart.get_cart_total()
+    print(cart_items)
     context = {
         'cart_items': cart_items,
-        'total_price': total_price
+        'total_price': total_price,
     }
     return render(request, 'shop/cart.html', context)
 
@@ -94,17 +118,17 @@ class CheckoutAddress(View):
              total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
                 
 
-            #  order = Orders.objects.create(user=request.user, address=address , total = total1 )
-            #  if request.user.cart:
-            #      cart_id = request.user.cart.values('id').first()['id']
-            #      cart_items = CartItems.objects.filter(cart_id = cart_id).all()
-            #      product = Product.objects.all()
-            #      for item in cart_items:
-            #          product = Product.objects.filter(id=item.product_id).first()
-            #          Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
-            #      cart_items.delete()
-            #      product.stock -= item.quantity
-            #      product.save()
+             order = Orders.objects.create(user=request.user, address=address, total = total1 )
+             if request.user.cart:
+                 cart_id = request.user.cart.values('id').first()['id']
+                 cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                 product = Product.objects.all()
+                 for item in cart_items:
+                     product = Product.objects.filter(id=item.product_id).first()
+                     Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
+                #  cart_items.delete()
+                #  product.stock -= item.quantity
+                #  product.save()
         return redirect('checkout_payment')
 
 
@@ -126,28 +150,64 @@ class CheckoutPayment(View):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-         form = payment_form(request.POST)
-         total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
-         if form.is_valid():
-            if form.cleaned_data['payment_type'] == 1:
+        form = payment_form(request.POST)
+        total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
+        if form.is_valid():
+            if form.cleaned_data['payment_type'] == '1':
+                # Process payment via wallet
                 wallet = UserWallet.objects.get(user=request.user)
                 wallet.balance = wallet.balance - total1
                 wallet.save()
-            Address = address.objects.get(user=request.user).first()
-            order = Orders.objects.create(user=request.user, address=Address , total = total1 )
-            if request.user.cart:
-                cart_id = request.user.cart.values('id').first()['id']
-                cart_items = CartItems.objects.filter(cart_id = cart_id).all()
-                product = Product.objects.all()
-                for item in cart_items:
-                    product = Product.objects.filter(id=item.product_id).first()
-                    Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
-                cart_items.delete()
-                product.stock -= item.quantity
-                product.save()
-              
-         return render(request, 'shop/checkout_success.html')
-    
+                order = Orders.objects.filter(user=request.user).last()
+                order.status = "fullfilled"
+                order.save()
+                if request.user.cart:
+                    cart_id = request.user.cart.values('id').first()['id']
+                    cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                    product = Product.objects.all()
+                    for item in cart_items:
+                        product = Product.objects.filter(id=item.product_id).first()
+                        cart_items.delete()
+                        product.stock -= item.quantity
+                        product.save()
+                return render(request, 'shop/checkout_success.html', {'order': order})
+            elif form.cleaned_data['payment_type'] == '2':
+                # Process payment via coupon code
+                code = request.POST['fname']
+                try:
+                    coupon = Coupon.objects.get(code=code)
+                    if coupon.is_used:
+                        error_message = "Coupon has already been used."
+                    elif coupon.expiration_date < timezone.now().date():
+                        error_message = "Coupon has expired."
+                    else:
+                        coupon.discount_amount  -= total1
+                        coupon.is_used = True
+                        coupon.save()
+                        order = Orders.objects.filter(user=request.user).last()
+                        order.status = "fullfilled"
+                        order.save()
+                        if request.user.cart:
+                            cart_id = request.user.cart.values('id').first()['id']
+                            cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                            product = Product.objects.all()
+                            for item in cart_items:
+                                product = Product.objects.filter(id=item.product_id).first()
+                                cart_items.delete()
+                                product.stock -= item.quantity
+                                product.save()
+                        return render(request, 'shop/checkout_success.html', {'order': order})
+                except Coupon.DoesNotExist:
+                    error_message = "Invalid coupon code." 
+                
+                if 'error_message' in locals():
+                    # Display error message to the user
+                    return render(request, 'shop/checkout_success.html', {'form': form, 'error_message': error_message})
+            else:
+                # Invalid payment type
+                error_message = "Invalid payment type."
+                return render(request, 'shop/checkout_success.html', {'form': form, 'error_message': error_message})
+
 
 
 

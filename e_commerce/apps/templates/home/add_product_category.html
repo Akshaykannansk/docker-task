@@ -10,7 +10,7 @@
     <div class="row">
       <div class="col-md-12">
         <div class="form-group">
-          <label class="bmd-label-floating">Add category</label>
+          <label class="bmd-label-floating">Add xzcSDfsecategory</label>
           {{ form.category_name }}
         </div>
       </div>
@@ -26,9 +26,9 @@
           <tr>
             <th>Select</th>
             <th>category</th>
-            <th>Email</th>
-            <th>First name</th>
-            <th>Last name</th>
+            <th>products</th>
+            <th>action</th>
+
           </tr>
         </thead>
         <tbody>
@@ -37,7 +37,7 @@
           <tr>
             <td><input type="checkbox"  value="{{ category.id }}"></td>
             <td>{{ category.category_name }}</td>
-            <td> <a href="{% url 'product_view' category.id %}" > products </a> </td>
+            <td> <a href="{% url 'product_view'%}" > products </a> </td>
           </tr>
           {% endfor %}
         </tbody>

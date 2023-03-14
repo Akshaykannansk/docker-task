@@ -1,6 +1,8 @@
 from django.db import models
 from apps.authentication.models import CustomUser
 from apps.home.models import Product
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class address(models.Model):
@@ -45,6 +47,7 @@ class Orders(models.Model):
     address = models.ForeignKey(address, null=True, on_delete=models.SET_NULL)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length= 25, default="pending")
+    calculation = models.IntegerField(default=0)
 
 
 
@@ -54,6 +57,26 @@ class Order_items(models.Model):
     product = models.CharField(max_length=50)
     quantity = models.IntegerField(default=1)
     price = models.IntegerField(default=0)
+
+
+
+class bonuses(models.Model):
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
+    order_total = models.DecimalField(max_digits=10, decimal_places=2,default=0.00 ,null=True)
+    badge = models.CharField(max_length=50 , default="nothing" , null=True)
+
+    @receiver(post_save, sender=CustomUser)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            bonuses.objects.create(user=instance)
+
+    @receiver(post_save, sender=CustomUser)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.bonuses.save()
+
+
+
+
     
 
 
