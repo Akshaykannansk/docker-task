@@ -3,6 +3,7 @@ from apps.authentication.models import CustomUser
 from .models import UserWallet
 from django.contrib.auth.decorators import login_required
 import random, string
+from decimal import Decimal
 from django.utils import timezone
 from .models import Coupon
 from django.contrib import messages
@@ -16,7 +17,7 @@ def FundDeposit(request):
            amount = request.POST["amount"]
            senderUser= CustomUser.objects.get(username=request.user.username)
            userget = UserWallet.objects.get(user= senderUser)
-           userget.balance += float(amount)
+           userget.balance += Decimal(amount)
            
            userget.save()
            msg = "Transaction Success"

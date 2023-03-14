@@ -6,6 +6,40 @@
 <form method="post" >
     {% csrf_token %}
     {{ form.as_p }}
+<div>
+    wallet balance : {{ wallet}} <br>
+    balance after payment : {{ balance }} <br> </div>
+    <label for="fname">Code:</label> </br>
+    <input type="text" id="fname" name="fname"> </br>
 <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock content %}
+
+<script>
+    $(document).ready(function() {
+      function hide() {
+        if ($('#id_type option:selected').val() == "1") {
+          $('#id_list1').hide();
+          $('#id_list2').show();
+        } else {
+          $('#id_list1').show();
+          $('#id_list2').hide();
+        }
+      }
+    
+      hide();
+    
+      $('#id_type').on('change', hide);
+    });
+    </script>
+    
+    <div>
+      {{ form.type.label_tag }}{{ form.type }}
+    </div>
+    <div>
+      {{ form.list1.label_tag }}{{ form.list1 }}
+    </div>
+    <div>
+      {{ form.list2.label_tag }}{{ form.list2 }}
+    </div>
+    

@@ -1,11 +1,17 @@
 {% extends 'shop/base.html' %}
 
 {% block content %}
+
+
+{% if error_message %}
+
+<div> {{error_message}} </div>
+{% else %}
   <div class="container mt-4">
     <h1>Checkout Successful!</h1>
     <p>Thank you for your order. Your payment has been processed successfully.</p>
-    <p>Your order ID is: 575{{ order.id}}</p>
-    <p>Total amount paid:₹{{ order.total }}</p>
-    <a class="btn btn-primary" type="button" href ="{% url 'shop' %}">Back to shop</a>
+    <p>Your order ID is:{{ order.id}}</p>
+    <p>Total amount paid: ${{ order.total }}</p>
   </div>
+   {% endif %}
 {% endblock content %}
