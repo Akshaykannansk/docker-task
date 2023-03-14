@@ -114,10 +114,15 @@ class ProductCategoryAdd(View):
         return render(request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
+         categories = product_category.objects.all()
          form = productCategory(request.POST)
+         context = {
+            'categories': categories,
+            'form': form
+            }
          if form.is_valid():
             form.save()  # Saves the form data to the database
-         return render(request, self.template_name, {'form': form})
+         return render(request, self.template_name, context )
     
 @method_decorator(login_required(login_url="/login/"), name='dispatch')  
 class register_product(View):

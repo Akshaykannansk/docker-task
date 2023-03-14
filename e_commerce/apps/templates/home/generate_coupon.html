@@ -9,13 +9,13 @@
     {% csrf_token %}
     <div>
       <label for="discount_amount">Discount Amount:</label>
-      <input type="text" name="discount_amount">
+      <input type="text" name="discount_amount" required>
     </div>
     <div>
       <label for="expiration_date">Expiration Date:</label>
-      <input type="date" name="expiration_date">
+      <input type="date" name="expiration_date" required>
     </div>
-    <button type="submit">Generate</button>
+    <button type="submit" class="btn btn-primary">Generate</button>
   </form>
   {% endblock content %}
 

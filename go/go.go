@@ -182,7 +182,7 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 
 
 
-	SwalletQuery := "SELECT balance FROM wallet_userwallet WHERE id = 4"
+	SwalletQuery := "SELECT balance FROM wallet_userwallet WHERE id = 1"
 	Swalletrow := db.QueryRow(SwalletQuery)
 	var Swallet float64
 	if err := Swalletrow.Scan(&Swallet); err != nil {
@@ -191,7 +191,7 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	Swallet -= bonus
 	fmt.Println("wallet =",Swallet)
 
-	SupdateDynStmt := `update "wallet_userwallet" set "balance" = $1 where "user_id" = 4`
+	SupdateDynStmt := `update "wallet_userwallet" set "balance" = $1 where "user_id" = 1`
 	_, ex := db.Exec(SupdateDynStmt, Swallet)
 	CheckError(ex)
 

@@ -23,12 +23,6 @@ class productCategory(forms.ModelForm):
 
 
     class Meta:
-        model = Product
-        fields = ['name', 'description', 'price', 'image', 'product_category', 'stock']
-        widgets = {
-            'image': forms.ClearableFileInput(attrs={'multiple': True, 'accept': 'image/*'}),
-            'product_category': forms.Select(attrs={'class': 'form-control'})
-        }
-        labels = {
-            'image': 'Product Image'
-        }
+        model = product_category
+        fields = ['category_name']
+       

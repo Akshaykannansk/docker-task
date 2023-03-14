@@ -20,29 +20,34 @@ def FundDeposit(request):
            userget.balance += Decimal(amount)
            
            userget.save()
-           msg = "Transaction Success"
+           messages.success(request, "Fund successfully added")
        except Exception as e:
-           print(e)
-    return render(request,'home/fund-deposit.html',{"msg":msg})
+           messages.error(request, )
+    return render(request,'home/fund-deposit.html')
            
 
 #          -------------------------------------- coupon generation function -----------------------------------
 
 @login_required(login_url="/login/")
 def GenerateCoupons(request):
+
     if request.method == 'POST':
         getUser= CustomUser.objects.get(username=request.user.username)
         deductamount = UserWallet.objects.get(user = getUser) 
         discount_amount = request.POST['discount_amount']
-        deductamount.balance -= int(discount_amount)
         expiration_date = request.POST['expiration_date']
-        deductamount.save()
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        coupon = Coupon(code=code, discount_amount=discount_amount, expiration_date=expiration_date)
-        messages.success(request, "coupon generated")
-        messages.error(request, "some error occured")
-        coupon.save()
-        return redirect('coupon_list')
+        if deductamount.balance > Decimal (discount_amount):
+            deductamount.balance -= int(discount_amount)
+            deductamount.save()
+            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            coupon = Coupon(code=code, discount_amount=discount_amount, expiration_date=expiration_date)
+            messages.success(request, "coupon generated")
+            coupon.save()
+            return redirect('coupon_list')
+        else:
+            messages.error(request, "coupon amount is greater than wallet balance")
+            return render(request, 'home/generate_coupon.html')
+
     return render(request, 'home/generate_coupon.html')
 
 

@@ -102,6 +102,7 @@ class CheckoutAddress(View):
                 
 
              order = Orders.objects.create(user=request.user, address=address, total = total1 )
+             order = Orders.objects.create(user=request.user, address=address, total = total1 )
              if request.user.cart:
                  cart_id = request.user.cart.values('id').first()['id']
                  cart_items = CartItems.objects.filter(cart_id = cart_id).all()
@@ -139,21 +140,26 @@ class CheckoutPayment(View):
             if form.cleaned_data['payment_type'] == '1':
                 # Process payment via wallet
                 wallet = UserWallet.objects.get(user=request.user)
-                wallet.balance = wallet.balance - total1
-                wallet.save()
-                order = Orders.objects.filter(user=request.user).last()
-                order.status = "fullfilled"
-                order.save()
-                if request.user.cart:
-                    cart_id = request.user.cart.values('id').first()['id']
-                    cart_items = CartItems.objects.filter(cart_id = cart_id).all()
-                    product = Product.objects.all()
-                    for item in cart_items:
-                        product = Product.objects.filter(id=item.product_id).first()
-                        cart_items.delete()
-                        product.stock -= item.quantity
-                        product.save()
-                return render(request, 'shop/checkout_success.html', {'order': order})
+                if wallet.balance > total1:
+                    wallet.balance = wallet.balance - total1
+                    wallet.save()
+                    order = Orders.objects.filter(user=request.user).last()
+                    order.status = "fullfilled"
+                    order.save()
+                    if request.user.cart:
+                        cart_id = request.user.cart.values('id').first()['id']
+                        cart_items = CartItems.objects.filter(cart_id = cart_id).all()
+                        product = Product.objects.all()
+                        for item in cart_items:
+                            product = Product.objects.filter(id=item.product_id).first()
+                            cart_items.delete()
+                            product.stock -= item.quantity
+                            product.save()
+                    return render(request, 'shop/checkout_success.html', {'order': order})
+                else:
+                    messages.error(request,"insufficient balance")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+                   
             elif form.cleaned_data['payment_type'] == '2':
                 # Process payment via coupon code
                 code = request.POST['fname']
