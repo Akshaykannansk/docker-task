@@ -2,7 +2,7 @@
       <div class="logo">
         <a target="_blank" rel="noopener noreferrer" 
         href="{% url 'shop' %}" class="simple-text logo-normal">
-          Django Material
+          Django Task #1
         </a>
       </div>
       <div class="sidebar-wrapper">
@@ -27,12 +27,14 @@
               <p>Coupon</p>
             </a>
           </li>
+          {% if request.user.is_superuser %}
           <li class="nav-item {% if 'view product' in segments %} active {% endif %}">
             <a class="nav-link" href="{% url 'product_view' %}">
               <i class="material-icons">production_quantity_limits</i>
               <p>Manage Products</p>  
             </a>
           </li>
+          {% endif %}
           <li class="nav-item {% if 'userlist' in segments %} active {% endif %}">
             <a class="nav-link" href="{% url 'userlist' %}">
               <i class="material-icons">groups</i>
@@ -66,25 +68,8 @@
             </a>
           </li>
 
-          <li class="nav-item active-pro ">
-            <a class="nav-link" 
-               target="_blank" rel="noopener noreferrer"  
-               href="https://appseed.us/admin-dashboards/django-dashboard-material-pro">
-              <i class="material-icons">unarchive</i>
-              <p>PRO Version</p>
-            </a>
-          </li>
-
         {% else %}
-
-          <li class="nav-item active">
-            <a class="nav-link" 
-               target="_blank" rel="noopener noreferrer"  
-               href="https://appseed.us/admin-dashboards/django-dashboard-material-pro">
-              <i class="material-icons">unarchive</i>
-              <p>PRO Version</p>
-            </a>
-          </li>          
+     
 
         {% endif %}
         </ul>

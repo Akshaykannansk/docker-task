@@ -21,7 +21,7 @@
           <div class="card-footer">
             <div class="stats">
               <i class="material-icons text-danger">warning</i>
-              <a href="{% url fund_deposit %}">Add more fund</a>
+              <a href="{% url 'fund_deposit' %}">Add more fund</a>
             </div>
           </div>
         </div>
@@ -33,7 +33,7 @@
               <i class="material-icons">store</i>
             </div>
             <p class="card-category">Revenue</p>
-            <h3 class="card-title">$34,245</h3>
+            <a href = "{% url 'bonushistory'  %}"><h3 class="card-title">{{ revenue.bonusesamount__sum}}</h3> </a>
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -49,7 +49,7 @@
               <i class="material-icons">info_outline</i>
             </div>
             <p class="card-category">Fixed Issues</p>
-            <h3 class="card-title">75</h3>
+            <h3 class="card-title">{{ expense.order_total }}</h3>
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -60,12 +60,12 @@
       </div>
       <div class="col-lg-3 col-md-6 col-sm-6">
         <div class="card card-stats">
-          <div class="card-header card-header-info card-header-icon">
+          <div class="card-header  card-header-icon">
             <div class="card-icon">
-              <i class="fa fa-twitter"></i>
+              <img src= "{{badge}}" class="img-thumbnail" style="max-width:60px;"> 
+              {% comment %} <i class="fa fa-twitter"></i> {% endcomment %}
             </div>
             <p class="card-category">Followers</p>
-            <h3 class="card-title">+245</h3>
           </div>
           <div class="card-footer">
             <div class="stats">

@@ -9,18 +9,18 @@
 
 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Active</button>
+    <button class="btn btn-outline-primary nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Active</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Blocked</button>
+    <button class="btn btn-outline-primary nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Blocked</button>
   </li>
  
 </ul>
 <div class="tab-content" id="pills-tabContent">
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"><form method="POST" action="{% url 'userlist' %}">
-    {% csrf_token %}
-    <div class="d-flex flex-row-reverse">
-    <button type="submit" class="btn btn-danger mt-2 d-flex">Block</button></div>
+    {% csrf_token %}  
+    <div class="d-flex flex-row justify-content-between">  <h3 class="d-flex"> Active Users </h3>
+    <button type="submit" class="btn btn-danger d-flex">Block</button></div>
     <input type="hidden" name="action" value="block">
     <div class="card"> 
   
@@ -111,4 +111,4 @@ $('.nav-link').on('click', function () {
 
  </script> {% endcomment %}
 {% endblock javascripts %}
-
+{% include 'includes/scripts.html' %}

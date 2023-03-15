@@ -13,7 +13,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
 
     # The home page
-    path('', views.index, name='home'),
+    path('', DashBoard.as_view(), name='home'),
     path( 'view_product/', ProductView.as_view(), name='product_view' ),
 
     # Matches any html file

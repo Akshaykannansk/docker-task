@@ -21,10 +21,11 @@ def FundDeposit(request):
            
            userget.save()
            messages.success(request, "Fund successfully added")
+           return redirect ('home')
        except Exception as e:
-           messages.error(request, )
-    return render(request,'home/fund-deposit.html')
-           
+           messages.error(request, "Failed to deposit Fund")
+           return render(request,'home/fund-deposit.html')
+    return render(request,'home/fund-deposit.html')       
 
 #          -------------------------------------- coupon generation function -----------------------------------
 

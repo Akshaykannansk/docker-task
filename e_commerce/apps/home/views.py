@@ -17,18 +17,28 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from .models import *
 from wallet.models import UserWallet
+from shop.models import *
 from django.contrib import messages
+from django.db.models import Avg, Max, Min, Sum
 
 
 
-@login_required(login_url="/login/")
-def index(request):
-    user = UserWallet.objects.get(user=request.user)
-    context = {'segment': 'index', 'balance': user.balance}
+@method_decorator(login_required(login_url="/login/"), name='dispatch')
 
-    html_template = loader.get_template('home/index.html')
-    return HttpResponse(html_template.render(context, request))
+class DashBoard(View):
+    template_name = 'home/index.html'
+    context = {}
+    def get(self, request):
+        user = UserWallet.objects.get(user=request.user)
+        revenue = bonushistory.objects.filter(user_id= request.user).aggregate(Sum('bonusesamount'))
+        expense = bonuses.objects.get(user_id= request.user)
+        if expense.badge == "Bronze":
+            badgeimg = "media/images/vecteezy_winner-glass-award-clipart-design-illustration_9304587_717.png"
+        else:
+            badgeimg = "media/images/freebadge.png"
 
+        context = {'segment': 'index', 'balance': user.balance,'revenue': revenue, 'expense' : expense, 'badge': badgeimg }
+        return render (request, self.template_name, context)
 
 @login_required(login_url="/login/")
 def pages(request):
@@ -79,15 +89,15 @@ def UserListView(request):
         if action == 'block':
         
         # Deactivate each user with the corresponding ID
-            CustomUser.objects.filter(id__in=user_ids).update(is_active=False)
+            CustomUser.objects.filter(id__in=user_ids).update(is_active=False).exclude(is_superuser= True)
         elif action == 'unblock':
-            CustomUser.objects.filter(id__in=user_id).update(is_active=True)
+            CustomUser.objects.filter(id__in=user_id).update(is_active=True).exclude(is_superuser= True)
         # Redirect back to the user list
         return redirect('userlist')
     
     else:
-        active = CustomUser.objects.filter(is_active= True)
-        blocked = CustomUser.objects.filter(is_active= False)
+        active = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True)
+        blocked = CustomUser.objects.filter(is_active= False).exclude(is_superuser= True)
         context = {'active': active,'blocked': blocked, 'segments':'userlist'}    
         return render(request, 'home/user_list.html', context)
 
@@ -216,11 +226,25 @@ class bonus(View):
     template_name = "home/bonushistory.html"
     context ={}
     def get(self, request):
-        bonus = bonushistory.objects.all()
-        
-        # userbonus = bonushistory.objects.filter(sponsorid =request.user)
+        bonus = bonushistory.objects.all()       
+        userbonus = bonushistory.objects.filter(sponsor_id =request.user)
         context = {
             'bonus' : bonus,
-            # 'userbonus' : userbonus
+            'userbonus' : userbonus
         }
         return render(request, self.template_name, context)
+    
+
+
+
+
+
+
+# @method_decorator(login_required(login_url="/login/"), name='dispatch')  
+# class Revenue(View):
+#     template_name = "home/index.html"
+#     context = {}
+#     def get (self, request):
+#         revenue = bonuses.objects.get(user_id= request.user)
+#         context = {'revenue': revenue }
+#         return render (request, self.template_name, context)
