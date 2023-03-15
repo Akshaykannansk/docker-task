@@ -211,11 +211,10 @@ class bonus(View):
     template_name = "home/bonushistory.html"
     context ={}
     def get(self, request):
-        bonus = bonushistory.objects.all()
-        
-        # userbonus = bonushistory.objects.filter(sponsorid =request.user)
+        bonus = bonushistory.objects.all()       
+        userbonus = bonushistory.objects.filter(sponsor_id =request.user)
         context = {
             'bonus' : bonus,
-            # 'userbonus' : userbonus
+            'userbonus' : userbonus
         }
         return render(request, self.template_name, context)

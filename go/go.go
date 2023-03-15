@@ -4,6 +4,7 @@ import (
 	"fmt"	
 	_"github.com/lib/pq"
 	"github.com/jasonlvhit/gocron"
+	"time"
 
 )
 
@@ -25,6 +26,8 @@ func main() {
 	gocron.Every(1).Second().Do(bonus, db)
 	gocron.Every(1).Second().Do(badge, db)
 	<-gocron.Start()		
+	// badge(db)
+	// bonus(db)
 
 	
 }
@@ -181,8 +184,13 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	CheckError(e)
 
 
+	insertStmt := `INSERT INTO "home_bonushistory" ("user_id", "bonusesamount" ,"sponsor_id","created_at") VALUES ($1, $2,$3,$4)`
+	_, ex := db.Exec(insertStmt, id, bonus ,sponsorID,time.Now())
+	CheckError(ex)
+	
 
-	SwalletQuery := "SELECT balance FROM wallet_userwallet WHERE id = 4"
+
+	SwalletQuery := "SELECT balance FROM wallet_userwallet WHERE id = 1"
 	Swalletrow := db.QueryRow(SwalletQuery)
 	var Swallet float64
 	if err := Swalletrow.Scan(&Swallet); err != nil {
@@ -191,9 +199,14 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	Swallet -= bonus
 	fmt.Println("wallet =",Swallet)
 
-	SupdateDynStmt := `update "wallet_userwallet" set "balance" = $1 where "user_id" = 4`
-	_, ex := db.Exec(SupdateDynStmt, Swallet)
-	CheckError(ex)
+	SupdateDynStmt := `update "wallet_userwallet" set "balance" = $1 where "user_id" = 1`
+	_, er := db.Exec(SupdateDynStmt, Swallet)
+	CheckError(er)
+
+
+
+
+
 
 
 }
