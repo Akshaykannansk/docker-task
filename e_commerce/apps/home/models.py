@@ -7,6 +7,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from apps.authentication.models import CustomUser
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 # Create your models here.
@@ -35,7 +37,25 @@ class bonushistory(models.Model):
     bonusesamount = models.DecimalField(max_digits=5, decimal_places=2)
     created_at = models.DateTimeField(default=datetime.now)
 
+class profile(models.Model):
+
+    user = models.OneToOneField(CustomUser,on_delete=models.CASCADE)
+    address = models.CharField(max_length=50 , null=True )
+    city = models.CharField(max_length=50 , null=True )
+    pincode = models.CharField(max_length=6 , null=True )
+    country = models.CharField(max_length=50 , null=True )
+    AboutMe = models.CharField(max_length=100 , null=True )
   
+
+
+    @receiver(post_save, sender=CustomUser)
+    def create_user_profile(sender, instance, created, **kwargs):
+        if created:
+            profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=CustomUser)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save() 
 
 
 

@@ -12,7 +12,7 @@ from django.urls import reverse
 from apps.authentication.models import CustomUser
 from django.views.generic import View
 from django.views import View
-from .forms import ProductForm, productCategory
+from .forms import *
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
 from .models import *
@@ -235,16 +235,18 @@ class bonus(View):
         return render(request, self.template_name, context)
     
 
-
-
-
-
-
-# @method_decorator(login_required(login_url="/login/"), name='dispatch')  
-# class Revenue(View):
-#     template_name = "home/index.html"
-#     context = {}
-#     def get (self, request):
-#         revenue = bonuses.objects.get(user_id= request.user)
-#         context = {'revenue': revenue }
-#         return render (request, self.template_name, context)
+class userprofile(View):
+    template_name = "home/profile.html"
+    context ={}
+    def get(self, request):
+        userprofile = profile.objects.get(user_id =request.user)
+        context ={
+            'current_user' :  userprofile
+        }
+        return render(request, self.template_name, context)
+    def post(self, request, *args, **kwargs):
+         form = profileform(request.POST, request.FILES)
+         
+         if form.is_valid():
+            form.save()  # Saves the form data to the database
+         return render(request, self.template_name, {'form': form})
