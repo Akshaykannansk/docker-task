@@ -102,7 +102,6 @@ class CheckoutAddress(View):
                 
 
              order = Orders.objects.create(user=request.user, address=address, total = total1 )
-             order = Orders.objects.create(user=request.user, address=address, total = total1 )
              if request.user.cart:
                  cart_id = request.user.cart.values('id').first()['id']
                  cart_items = CartItems.objects.filter(cart_id = cart_id).all()

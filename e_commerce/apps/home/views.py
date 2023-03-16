@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse         
 from apps.authentication.models import CustomUser
-from django.views.generic import View
+from django.views.generic import View, ListView
 from django.views import View
 from .forms import *
 from django.utils.decorators import method_decorator
@@ -34,6 +34,10 @@ class DashBoard(View):
         expense = bonuses.objects.get(user_id= request.user)
         if expense.badge == "Bronze":
             badgeimg = "media/images/vecteezy_winner-glass-award-clipart-design-illustration_9304587_717.png"
+        elif expense.badge == "Silver":
+            badgeimg = "media/images/vecteezy_winner-glass-award-clipart-design-illustration_9391666_914.png"
+        elif expense.badge == "Gold":
+            badgeimg = "media/images/vecteezy_winner-glass-award-clipart-design-illustration_9383796_255.png"
         else:
             badgeimg = "media/images/freebadge.png"
 
@@ -239,14 +243,46 @@ class userprofile(View):
     template_name = "home/profile.html"
     context ={}
     def get(self, request):
-        userprofile = profile.objects.get(user_id =request.user)
+        currentuser = CustomUser.objects.get(username = request.user.username)
+        aboutme = profile.objects.get(user=request.user)
+        user_form = UpdateUserform( instance = request.user)
+        profile_form = profileform(instance = request.user.profile)
         context ={
-            'current_user' :  userprofile
+            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser
         }
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
-         form = profileform(request.POST, request.FILES)
+         user_form = UpdateUserform( request.POST, instance = request.user)
+         profile_form = profileform(request.POST, instance = request.user.profile)
+         currentuser = CustomUser.objects.get(username = request.user.username)
+         aboutme = profile.objects.get(user=request.user)
+         context ={
+            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser
+        }
          
-         if form.is_valid():
-            form.save()  # Saves the form data to the database
-         return render(request, self.template_name, {'form': form})
+         if user_form.is_valid() and profile_form.is_valid():
+             user_form.save()
+             profile_form.save()
+              # Saves the form data to the database
+         return render(request, self.template_name, context)
+    
+
+
+class OrderHistoryView (View):
+    template_name = "home/orderhistory.html"
+    context ={}
+    def get(self,request):
+        orders = Orders.objects.filter(user_id = request.user)
+        ordertotal = orders.aggregate(Sum('total'))
+        context = {'order': orders, 'ordertotal': ordertotal}
+        return render(request, self.template_name, context)
+
+    
+class OrderItemsHistoryView (View):
+    template_name = "home/orderitemshistory.html"
+    context ={}
+    def get(self,request, id):
+        orders = Order_items.objects.filter(order_id = id)
+        ordertotal = orders.aggregate(Sum('price'))
+        context = {'orderitems': orders, 'ordertotal' : ordertotal}
+        return render(request, self.template_name, context)

@@ -6,7 +6,31 @@
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
+{% if userform.errors %}
+<div class="alert alert-danger alert-dismissible" role="alert">
+    <div id="form_errors">
+        {% for key, value in userform.errors.items %}
+            <strong>{{ value }}</strong>
+        {% endfor %}
+    </div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
 
+{% if profileform.errors %}
+<div class="alert alert-danger alert-dismissible" role="alert">
+    <div id="form_errors">
+        {% for key, value in profileform.errors.items %}
+            <strong>{{ value }}</strong>
+        {% endfor %}
+    </div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endif %}
           <div class="row">
             <div class="col-md-8">
               <div class="card">
@@ -15,24 +39,25 @@
                   <p class="card-category">Complete your profile</p>
                 </div>
                 <div class="card-body">
-                  <form>
+                  <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="row">
                       <div class="col-md-5">
                         <div class="form-group">
                           <label class="bmd-label-floating">UserID (disabled)</label>
-                          <input type="text" class="form-control" disabled value="{{ current_user.user.id }}">
+                
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="form-group">
                           <label class="bmd-label-floating">Username</label>
-                          <input type="text" class="form-control" disabled value="{{ current_user.user.username }}">
+                          {{userform.username}}
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Email address</label>
-                          <input type="email" class="form-control" disabled value="{{ current_user.user.email }}">
+                         {{userform.email}}
                         </div>
                       </div>
                     </div>
@@ -40,13 +65,13 @@
                       <div class="col-md-6">
                         <div class="form-group">
                           <label class="bmd-label-floating">Fist Name</label>
-                          <input type="text" class="form-control" value="{{ current_user.user.first_name }}">
+                           {{userform.first_name}}
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="form-group">
                           <label class="bmd-label-floating">Last Name</label>
-                          <input type="text" class="form-control" value="{{ current_user.user.last_name }}">
+                         {{userform.last_name}}
                         </div>
                       </div>
                     </div>
@@ -54,8 +79,7 @@
                       <div class="col-md-12">
                         <div class="form-group">
                           <label class="bmd-label-floating">Adress</label>
-                          <input type="text" class="form-control" value="{{ current_user.address|default:'' }}">
-
+                         {{profileform.address}}
 
                         </div>
                       </div>
@@ -64,19 +88,19 @@
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">City</label>
-                          <input type="text" class="form-control"  value="{{ current_user.city|default:'' }}">
+                          {{profileform.city}}
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Country</label>
-                          <input type="text" class="form-control"  value="{{ current_user.country|default:'' }}">
+                          {{profileform.country}}
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-group">
                           <label class="bmd-label-floating">Postal Code</label>
-                          <input type="text" class="form-control"   value="{{ current_user.pincode|default:'' }}">
+                          {{profileform.pincode}}
                         </div>
                       </div>
                     </div>
@@ -86,7 +110,7 @@
                           <label>About Me</label>
                           <div class="form-group">
                             <label class="bmd-label-floating">how's it hanging ;o</label>
-                            <textarea class="form-control" rows="5" name="about-me" id="about-me">{{ current_user.AboutMe|default:'' }}</textarea>
+                            {{profileform.AboutMe}}
 
                           </div>
                         </div>
@@ -106,21 +130,20 @@
                   </a>
                 </div>
                 <div class="card-body">
-                  <h6 class="card-category text-gray">
-                    {{ current_user.username }}
-                  </h6>
-                  <h4 class="card-title">
-                    {{ current_user.email }}
+                  <h4 class="card-title text-grey">
+                    {{ current_user.first_name }} {{current_user.last_name}}
                   </h4>
+                  <h5 class="card-category text-gray">
+                    @{{ current_user.username }}
+                  </h5>
                   <p class="card-description">
-                    Don't be scared of the truth because we need to restart the human foundation in truth And I love you like Kanye loves Kanye I love Rick Owens’ bed design but the back is...
+                     {{about.AboutMe}}
                   </p>
-                  <a href="#pablo" class="btn btn-primary btn-round">Follow</a>
+                  {% comment %} <a href="#pablo" class="btn btn-primary btn-round">Follow</a> {% endcomment %}
                 </div>
               </div>
             </div>
           </div>
-
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->

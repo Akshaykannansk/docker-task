@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Order History</h5>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Product</th>
+            <th>quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for bonus in order %}
+            <tr>
+                <td>{{ bonus.id }} </td>
+                <td>{{ bonus.total }} </td>
+                <td>{{ bonus.status }}</td>
+                <td><a href="{% url 'orderitemshistory' bonus.id %}"> order items </a> </td>
+            </tr>
+            {% endfor %} 
+          
+         
+        </tbody>
+      </table>
+      <tr> Total : {{ordertotal.total__sum}} </tr>
+    </div>
+  </div>
+  
+  
+{% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

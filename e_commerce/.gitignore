@@ -20,7 +20,10 @@ venv
 
 # javascript
 package-lock.json
-
+apps/home/migrations/
+apps/authentication/migrations/
+apps/wallet/migrations/
+apps/shop/migrations/
 staticfiles/*
 !staticfiles/.gitkeep 
 .vscode/symbols.json
