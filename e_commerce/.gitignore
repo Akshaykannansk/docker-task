@@ -1,7 +1,10 @@
 # byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-
+home/__pycache__/
+authentication/__pycache__/
+shop/__pycache__/
+wallet/__pycache__/
 # tests and coverage
 *.pytest_cache
 .coverage

@@ -20,8 +20,8 @@ from wallet.models import UserWallet
 from shop.models import *
 from django.contrib import messages
 from django.db.models import Avg, Max, Min, Sum
-
-
+from django.views.generic import UpdateView, ListView
+from django.template.loader import render_to_string
 
 @method_decorator(login_required(login_url="/login/"), name='dispatch')
 
@@ -93,9 +93,9 @@ def UserListView(request):
         if action == 'block':
         
         # Deactivate each user with the corresponding ID
-            CustomUser.objects.filter(id__in=user_ids).update(is_active=False).exclude(is_superuser= True)
+            CustomUser.objects.filter(id__in=user_ids).update(is_active=False)
         elif action == 'unblock':
-            CustomUser.objects.filter(id__in=user_id).update(is_active=True).exclude(is_superuser= True)
+            CustomUser.objects.filter(id__in=user_id).update(is_active=True)
         # Redirect back to the user list
         return redirect('userlist')
     
@@ -201,28 +201,50 @@ def delete(request, id):
 #   return HttpResponseRedirect(reverse('index'))
 
 
+# class ItemListView(ListView):
+#     model = Product
+#     template_name = 'home/item_list.html'
 
+#     def get_queryset(self):
+#         return Product.objects.all()
+    
+class ItemUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+    template_name = 'home/item_edit_form.html'
 
-class UpdateProductView(View):
-    template_name = 'update_product_modal.html'
+    def dispatch(self, *args, **kwargs):
+        self.item_id = kwargs['pk']
+        return super(ItemUpdateView, self).dispatch(*args, **kwargs)
 
-    def get(self, request, product_id):
-        product = get_object_or_404(Product, id=product_id)
-        form = ProductForm(instance=product)
-        context = {'form': form, 'product': product}
-        return render(request, self.template_name, context)
+    def form_valid(self, form):
+        form.save()
+        item = Product.objects.get(id=self.item_id)
+        return HttpResponse(render_to_string('home/view_product.html', {'item': item}))
 
-    def post(self, request, product_id):
-        product = get_object_or_404(Product, id=product_id)
-        form = ProductForm(request.POST, request.FILES, instance=product)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Product updated successfully.')
-            return redirect('product_list')
-        else:
-            messages.error(request, 'Error updating product.')
-            context = {'form': form, 'product': product}
-            return render(request, self.template_name, context) 
+class UpdateProduct(View):
+    template_name = 'home/updateproduct.html'
+
+    def get(self,request,product_id):
+        return render(request,self.template_name)
+
+    # def get(self, request, product_id):
+    #     product = get_object_or_404(Product, id=product_id)
+    #     form = ProductForm(instance=product)
+    #     context = {'form': form, 'product': product}
+    #     return render(request, self.template_name, context)
+
+    # def post(self, request, product_id):
+    #     product = get_object_or_404(Product, id=product_id)
+    #     form = ProductForm(request.POST, request.FILES, instance=product)
+    #     if form.is_valid():
+    #         form.save()
+    #         messages.success(request, 'Product updated successfully.')
+    #         return redirect('product_list')
+    #     else:
+    #         messages.error(request, 'Error updating product.')
+    #         context = {'form': form, 'product': product}
+    #         return render(request, self.template_name, context) 
 
 
 

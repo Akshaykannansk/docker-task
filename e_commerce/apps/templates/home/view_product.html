@@ -4,12 +4,10 @@
 {% block head %}
     {{ block.super }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.1/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
-{% endblock %}
+    {% endblock %}
+    
 
-
-{% block content %}
+    {% block content %}
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title">Product List</h3>
@@ -45,66 +43,17 @@
                             <td><img src="/media/{{ product.image }}" class="img-thumbnail" style="width:100px;"></td>
                             <td>
                                 <a href="/delete/{{ product.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
-
+                                
                                 {% comment %} <a href="/update/{{ product.id }}" class="btn btn-primary">Edit</a>{% endcomment %}
                                
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</button>
+                                {% comment %} <a  href="/update/{{ product.id }}/"class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
+                                {% comment %} <a href="{% url 'item_edit' product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
+                                <a href="{% url 'item_edit' pk=product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
 
 
-                                <div class="modal fade" id="editModal{{ product.id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Product</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <form method="post" enctype="multipart/form-data" action="{% url 'update_product' product.id %}">
-                                                {% csrf_token %}
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label for="name" class="form-label">Name</label>
-                                                        <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="description" class="form-label">Description</label>
-                                                        <textarea class="form-control" id="description" name="description">{{ product.description }}</textarea>
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="price" class="form-label">Price</label>
-                                                        <input type="text" class="form-control" id="price" name="price" value="{{ product.price }}">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="stock" class="form-label">Stock</label>
-                                                        <input type="number" class="form-control" id="stock" name="stock" value="{{ product.stock }}">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="image" class="form-label">Image</label>
-                                                        <input type="file" class="form-control" id="image" name="image">
-                                                    </div>
-                                                    <div class="mb-3">
-                                                        <label for="product_category" class="form-label">Category</label>
-                                                        <select class="form-select" id="product_category" name="product_category">
-                                                            {% for category in categories %}
-                                                                {% if category == product.product_category %}
-                                                                    <option value="{{ category.id }}" selected>{{ category.category_name }}</option>
-                                                                {% else %}
-                                                                    <option value="{{ category.id }}">{{ category.category_name }}</option>
-                                                                {% endif %}
-                                                            {% endfor %}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
                                 
 
-
+                                
                             </td>
                         </tr>
                         {% empty %}
@@ -118,4 +67,7 @@
             </div>
         </div>
     </div>
-{% endblock %}
+    {% endblock %}
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
