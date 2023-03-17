@@ -27,7 +27,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField(max_length = 50 ,default=1) 
-    image = models.ImageField(upload_to='images/', blank=True)
+    image = models.ImageField(upload_to='images/')
     product_category = models.ForeignKey(product_category, on_delete=models.CASCADE)
 
 
@@ -58,6 +58,12 @@ class profile(models.Model):
     @receiver(post_save, sender=CustomUser)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save() 
+
+
+class bonusconfig(models.Model):
+    badge = models.CharField(max_length=10)
+    percentage = models.DecimalField( max_digits=5, decimal_places=2)
+
 
 
 

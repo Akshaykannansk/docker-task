@@ -3,21 +3,28 @@
 
 
 {% block content %}
-<form role="form" method="post" action="">
-                
-    {% csrf_token %} 
+<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+  Add category
+</button>
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+    <form role="form" method="post" action="">
+      {% csrf_token %} 
 
-    <div class="row">
-      <div class="col-md-12">
-        <div class="form-group">
-          <label class="bmd-label-floating">Add category</label>
-          {{ form.category_name }}
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="bmd-label-floating">Add category</label>
+            {{ form.category_name }}
+          </div>
         </div>
       </div>
-    </div>
-    <input type="submit" value="Submit">
-</form>
+      <input type="submit" value="Submit">
+  </form>
+</div>
 
+</div>             
+   
 <div class="card"> 
     
     <div class="table-responsive"> 

@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+{% block javascripts %}
+<script src="https://unpkg.com/htmx.org@1.8.6" integrity="sha384-Bj8qm/6B+71E6FQSySofJOUjA/gq330vEqjFx9LakWybUySyI1IQHwPtbTU7bNwx" crossorigin="anonymous"></script>
+{% endblock javascripts %}  
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Bonus Configuration</h5>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Badge</th>
+            <th>bonus percentage</th>
+            <th>action</th>
+          </tr>
+        </thead>
+        <tbody hx-target="closest tr" hx-swap="outerHTML">
+
+            {% for badge in badges %}
+            <tr>
+                <td>{{ badge.id }} </td>
+                <td>{{ badge.badge }} </td>
+                <td>{{ badge.percentage }}</td>
+                <td> <button class="btn btn-danger"
+                    hx-get="{{badge.id}}/edit"
+                    hx-trigger="edit"
+                    _="on click
+                         if .editing is not empty
+                           Swal.fire({title: 'Already Editing',
+                                      showCancelButton: true,
+                                      confirmButtonText: 'Yep, Edit This Row!',
+                                      text:'Hey!  You are already editing a row!  Do you want to cancel that edit and continue?'})
+                           if the result's isConfirmed is false
+                             halt
+                           end
+                           send cancel to .editing
+                         end
+                         trigger edit">Edit</button>
+                </td>
+            </tr>
+            {% endfor %} 
+          
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+{% endblock %}

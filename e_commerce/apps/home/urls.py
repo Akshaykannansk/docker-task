@@ -27,10 +27,13 @@ urlpatterns = [
     path('bonushistory/',bonus.as_view(),name='bonushistory'),
     path('profile/',userprofile.as_view(),name='profile'),
     path('orderhistory/', OrderHistoryView.as_view(), name='orderhistory'),
-    path('orderitemshistory/<int:id>', OrderItemsHistoryView.as_view(), name='orderitemshistory')
+    path('orderitemshistory/<int:id>', OrderItemsHistoryView.as_view(), name='orderitemshistory'),
+    path('bonusconfig/', bonuscon.as_view(), name='bonusconfig'),
+    
+]
     # path('update/<int:id>', views.update, name='update'),
     # path('update/updaterecord/<int:id>', views.updaterecord, name='updaterecord'),
-]
+    
 
 
 if settings.DEBUG:

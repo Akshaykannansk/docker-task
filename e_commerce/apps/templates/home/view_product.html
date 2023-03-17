@@ -48,7 +48,10 @@
                                
                                 {% comment %} <a  href="/update/{{ product.id }}/"class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
                                 {% comment %} <a href="{% url 'item_edit' product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
-                                <a href="{% url 'item_edit' pk=product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
+                                <a href="{% url 'item_edit' product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
+                                
+                                  
+                               
 
 
                                 
@@ -67,6 +70,10 @@
             </div>
         </div>
     </div>
+
+    
+    
+      
     {% endblock %}
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

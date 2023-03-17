@@ -130,13 +130,11 @@ class ProductCategoryAdd(View):
     def post(self, request, *args, **kwargs):
          categories = product_category.objects.all()
          form = productCategory(request.POST)
-         context = {
-            'categories': categories,
-            'form': form
-            }
+         
          if form.is_valid():
-            form.save()  # Saves the form data to the database
-         return render(request, self.template_name, context )
+            form.save() 
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
     
 @method_decorator(login_required(login_url="/login/"), name='dispatch')  
 class register_product(View):
@@ -151,7 +149,6 @@ class register_product(View):
 
     def post(self, request, *args, **kwargs):
          form = ProductForm(request.POST, request.FILES)
-         print(form,'')
          if form.is_valid():
             form.save()  # Saves the form data to the database
          return render(request, self.template_name, {'form': form})
@@ -180,34 +177,7 @@ def delete(request, id):
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
  
-# def update(request, id):
-#   Products = Product.objects.get(id=id)
-#   context = {
-#     'Product': Products,
-#   }
-#   return render(request, 'home/update.html', context)
-    
   
-# def updaterecord(request, id):
-#   name = request.POST['name']
-#   description = request.POST['description']
-#   price = request.POST['price']
-#   image = request.POST['image']
-#   member = Product.objects.get(id=id)
-#   member.name = name
-#   member.price = price
-#   member.image = image
-#   member.save()
-#   return HttpResponseRedirect(reverse('index'))
-
-
-# class ItemListView(ListView):
-#     model = Product
-#     template_name = 'home/item_list.html'
-
-#     def get_queryset(self):
-#         return Product.objects.all()
-    
 class ItemUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
@@ -219,8 +189,10 @@ class ItemUpdateView(UpdateView):
 
     def form_valid(self, form):
         form.save()
-        item = Product.objects.get(id=self.item_id)
-        return HttpResponse(render_to_string('home/view_product.html', {'item': item}))
+        return redirect('product_view')
+
+
+
 
 class UpdateProduct(View):
     template_name = 'home/updateproduct.html'
@@ -308,3 +280,14 @@ class OrderItemsHistoryView (View):
         ordertotal = orders.aggregate(Sum('price'))
         context = {'orderitems': orders, 'ordertotal' : ordertotal}
         return render(request, self.template_name, context)
+
+
+class bonuscon(View):
+    template_name = "home/bonusconfig.html"
+    context ={}
+    def get(self,request):
+        badges = bonusconfig.objects.all().order_by('id')
+        context ={
+            'badges' : badges
+        }
+        return render(request,self.template_name,context)
