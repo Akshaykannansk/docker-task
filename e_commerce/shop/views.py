@@ -164,10 +164,9 @@ class CheckoutPayment(View):
                 code = request.POST['fname']
                 try:
                     coupon = Coupon.objects.get(code=code)
-                    if coupon.is_used:
-                       messages.error(request,"Coupon has already been used.")
-                    elif coupon.expiration_date < timezone.now().date():
+                    if coupon.expiration_date < timezone.now().date():
                        messages.error(request, "Coupon has expired.")
+                       return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                     else:
                         coupon.discount_amount  -= total1
                         coupon.is_used = True
