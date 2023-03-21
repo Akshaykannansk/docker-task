@@ -1,9 +1,12 @@
 
 {% extends "layouts/base.html" %}
-
+{% block stylesheets %}  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" /> {% endblock stylesheets %}
 {% block content %}
-<a href="{% url 'generate_coupons' %}">Generate Coupon</a>
-  <h1>Coupon List</h1>
+<div class="d-flex justify-content-between">
+<h1>Coupon List</h1>
+<div class="d-flex align-items-center"><a class= "btn btn-primary" href="{% url 'generate_coupons' %}">Generate Coupon</a>
+</div>
+</div>
   <div class="card"> 
   <div class="table-responsive"> 
   <table class="table">
@@ -25,8 +28,8 @@
           <td>{% if coupon.is_used %}Yes{% else %}No{% endif %}</td>
           <td>
             <a href="{% url 'use_coupon' coupon.id %}">Mark as Used</a>
-            <a href="{% url 'delete_coupon' coupon.id %}">Delete</a>
-            <button onclick="copy('{{ coupon.code }}','#copy_button')" id="copy_button" >Copy</button> 
+            <a href="{% url 'delete_coupon' coupon.id %}" ><i class="fa fa-solid fa-trash fa-xl"></i></a>
+            <button onclick="copy('{{ coupon.code }}','#copy_button')" id="copy_button" ><i class="fa fa-clone "></i></button> 
           </td>
         </tr>
       {% endfor %}
@@ -38,19 +41,33 @@
 
 {% block javascripts %}
 <script>
-function copy(text, target) {
-    setTimeout(function() {
-    $('#copied_tip').remove();
-    }, 800);
-    $(target).append("<div class='tip' id='copied_tip'>Copied!</div>");
+  function copy(text) {
+    var message = document.createElement('div');
+    message.innerHTML = 'Copied!';
+    message.style.position = 'absolute';
+    message.style.top = '10px';
+    message.style.left = '50%';
+    message.style.transform = 'translateX(-50%)';
+    message.style.padding = '10px 20px';
+    message.style.backgroundColor = '#333';
+    message.style.color = '#fff';
+    message.style.borderRadius = '5px';
+    message.style.zIndex = '9999';
+    document.body.appendChild(message);
+
     var input = document.createElement('input');
     input.setAttribute('value', text);
     document.body.appendChild(input);
     input.select();
     var result = document.execCommand('copy');
     document.body.removeChild(input)
+
+    setTimeout(function() {
+        document.body.removeChild(message);
+    }, 800);
     return result;
-    }
+}
+
 </script>
 
 {% endblock javascripts %}

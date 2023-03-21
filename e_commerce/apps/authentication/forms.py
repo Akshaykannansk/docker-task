@@ -39,7 +39,11 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control"
             }
         ))
-    sponsorname = forms.ModelChoiceField(queryset=CustomUser.objects.all(), empty_label=None)
+    sponsorname = forms.ModelChoiceField(
+        queryset=CustomUser.objects.all().order_by('id'),
+        empty_label=None,
+        initial=0,
+        widget=forms.Select(attrs={'class': 'form-control'}))
         
         
     username = forms.CharField(

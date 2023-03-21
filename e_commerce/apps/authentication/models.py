@@ -17,7 +17,7 @@ class CustomUser(AbstractUser):
     #to save the data
     def register(self):
         self.save()
-
+    
 
   
 

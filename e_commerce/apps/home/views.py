@@ -6,7 +6,7 @@ Copyright (c) 2019 - present AppSeed.us
 from django import template
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.urls import reverse         
 from apps.authentication.models import CustomUser
@@ -72,15 +72,6 @@ def pages(request):
 
 #user list printing
 
-
-
-# class UserListView(View):
-#     def get(request):
-#         users = CustomUser.objects.all()
-#         context = {'users': users}    
-#         return render(request, 'home/user_list.html', context)
-
-
 @login_required(login_url="/login/")
 
 
@@ -100,7 +91,7 @@ def UserListView(request):
         return redirect('userlist')
     
     else:
-        active = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True)
+        active = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True).exclude(id= request.user.id)
         blocked = CustomUser.objects.filter(is_active= False).exclude(is_superuser= True)
         context = {'active': active,'blocked': blocked, 'segments':'userlist'}    
         return render(request, 'home/user_list.html', context)
@@ -267,8 +258,10 @@ class OrderHistoryView (View):
     context ={}
     def get(self,request):
         orders = Orders.objects.filter(user_id = request.user)
+        dlorders = Orders.objects.filter(user_id__sponsorname = request.user)
         ordertotal = orders.aggregate(Sum('total'))
-        context = {'order': orders, 'ordertotal': ordertotal}
+        dlordertotal = dlorders.aggregate(Sum('total'))
+        context = {'order': orders,'dlorder':dlorders, 'ordertotal': ordertotal, 'dlordertotal': dlordertotal}
         return render(request, self.template_name, context)
 
     
@@ -291,3 +284,14 @@ class bonuscon(View):
             'badges' : badges
         }
         return render(request,self.template_name,context)
+
+
+# cart count
+
+
+class cartCount(View):
+    def get(self, request):
+        cart_id = cart.objects.filter(user=request.user).first()
+        cart_count = CartItems.objects.filter(cart=cart_id).aggregate(Sum('quantity'))['quantity__sum'] or 0
+        data = {'cart_count': cart_count}
+        return JsonResponse(data)

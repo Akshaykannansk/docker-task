@@ -29,7 +29,7 @@ urlpatterns = [
     path('orderhistory/', OrderHistoryView.as_view(), name='orderhistory'),
     path('orderitemshistory/<int:id>', OrderItemsHistoryView.as_view(), name='orderitemshistory'),
     path('bonusconfig/', bonuscon.as_view(), name='bonusconfig'),
-    
+    path('cart_count/', cartCount.as_view(), name='cart_count'),
 ]
     # path('update/<int:id>', views.update, name='update'),
     # path('update/updaterecord/<int:id>', views.updaterecord, name='updaterecord'),

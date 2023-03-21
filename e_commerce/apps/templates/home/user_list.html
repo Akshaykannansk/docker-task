@@ -20,15 +20,19 @@
   <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"><form method="POST" action="{% url 'userlist' %}">
     {% csrf_token %}  
     <div class="d-flex flex-row justify-content-between">  <h3 class="d-flex"> Active Users </h3>
-    <button type="submit" class="btn btn-danger d-flex">Block</button></div>
+      
+   <div class= "align-items-center"> {% if request.user.is_superuser %}<button type="submit" class="btn btn-danger">Block</button>   {% endif %} </div> </div>
+ 
     <input type="hidden" name="action" value="block">
     <div class="card"> 
   
-  <div class="table-responsive"> 
+  <div class="table-responsive table-hover table-striped"> 
   <table class="table">
     <thead class=" text-primary">
         <tr>
+          {% if request.user.is_superuser %}
           <th>Select</th>
+          {% endif %}
           <th>Username</th>
           <th>Email</th>
           <th>First name</th>
@@ -38,7 +42,9 @@
       <tbody>
         {% for user in active %}
         <tr>
+          {% if request.user.is_superuser %}
           <td><input type="checkbox" name="user" value="{{ user.id }}"></td>
+          {% endif %}
           <td>{{ user.username }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.first_name }}</td>
@@ -53,8 +59,11 @@
   <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab"><div class="tab-content" id="pills-tabContent">
     <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab"><form method="POST" action="{% url 'userlist' %}">
       {% csrf_token %}
-      <div class="d-flex flex-row-reverse">
-      <button type="submit" class="btn btn-success mt-2 d-flex">UnBlock</button></div>
+      <div class="d-flex flex-row justify-content-between">  <h3 class="d-flex"> Blocked Users </h3>
+        <div class= "align-items-center">
+          {% if request.user.is_superuser %}
+      <button type="submit" class="btn btn-success mt-2 d-flex">UnBlock</button> {% endif %} </div> </div>
+      
       <input type="hidden" name="action" value="unblock">
       <div class="card"> 
     
@@ -62,7 +71,9 @@
     <table class="table">
       <thead class=" text-primary">
           <tr>
+            {% if request.user.is_superuser %}
             <th>Select</th>
+            {% endif %}
             <th>Username</th>
             <th>Email</th>
             <th>First name</th>
@@ -72,7 +83,9 @@
         <tbody>
           {% for user1 in blocked %}
           <tr>
+            {% if request.user.is_superuser %}
             <td><input type="checkbox" name="user1" value="{{ user1.id }}"></td>
+            {% endif %}
             <td>{{ user1.username }}</td>
             <td>{{ user1.email }}</td>
             <td>{{ user1.first_name }}</td>

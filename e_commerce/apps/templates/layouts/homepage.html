@@ -32,15 +32,14 @@
 
 
 <body class="">
-    <div class="wrapper ">
+  <div class="wrapper ">
+      {% include 'includes/navigation.html' %}
   
   
-      <div class="main-panel">
+    <div>
   
-        {% include 'includes/navigation.html' %}
-  
-        <!-- End Navbar -->
-        <div class="content">
+      <!-- End Navbar -->
+      <div class="content">
           <div class="container-fluid">
             {% include 'includes/messages.html' %}
             {% block content %}{% endblock content %}

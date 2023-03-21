@@ -6,41 +6,31 @@
 <form method="post" >
     {% csrf_token %}
     {{ form.as_p }}
-<div>
+<div class= "1 select">
     wallet balance : {{ wallet}} <br>
-    error : {{error_message}}
     balance after payment : {{ balance }} <br> </div>
+
+    <div class= "2 select">
     <label for="fname">Code:</label> </br>
-    <input type="text" id="fname" name="fname"> </br>
+    <input type="text" id="fname" name="fname"> </br> </div>
 <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+error : {{error_message}}
 {% endblock content %}
-
+{% block javascripts %}
 <script>
-    $(document).ready(function() {
-      function hide() {
-        if ($('#id_type option:selected').val() == "1") {
-          $('#id_list1').hide();
-          $('#id_list2').show();
-        } else {
-          $('#id_list1').show();
-          $('#id_list2').hide();
-        }
+  $(document).ready(function() {
+    $('input[type="radio"]').click(function() {
+      var inputValue = $(this).attr("value");
+      if (inputValue) {
+        var targetBox = $("." + inputValue);
+        $(".select").not(targetBox).hide();
+        $(targetBox).show();
+      } else {
+        $(".select").hide();
       }
-    
-      hide();
-    
-      $('#id_type').on('change', hide);
     });
+  });
+  
     </script>
-    
-    <div>
-      {{ form.type.label_tag }}{{ form.type }}
-    </div>
-    <div>
-      {{ form.list1.label_tag }}{{ form.list1 }}
-    </div>
-    <div>
-      {{ form.list2.label_tag }}{{ form.list2 }}
-    </div>
-    
+  {% endblock javascripts  %}

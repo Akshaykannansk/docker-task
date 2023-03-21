@@ -1,40 +1,101 @@
 {% extends "layouts/base.html" %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+
+
+
+
+
+
 
 {% block content %}
 
-<div class="card">
-    <div class="card-body">
-      <h5 class="card-title">Order History</h5>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Id</th>
-            <th>Product</th>
-            <th>quantity</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-            {% for bonus in order %}
+
+
+
+  <nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Personal Sales</button>
+      <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Downline Sales</button>
+    </div>
+  </nav>
+  <div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div class="card">
+        <div class="card-header card-header-danger">
+          <h4 class="card-title">Personal Sales</h4>
+        </div>
+       <div class="card-body table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
             <tr>
-                <td>{{ bonus.id }} </td>
-                <td>{{ bonus.total }} </td>
-                <td>{{ bonus.status }}</td>
-                <td><a href="{% url 'orderitemshistory' bonus.id %}"> order items </a> </td>
+              <th>Id</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>items</th>
             </tr>
-            {% endfor %} 
-          
-         
-        </tbody>
-      </table>
-      <tr> Total : {{ordertotal.total__sum}} </tr>
+          </thead>
+          <tbody>
+              {% for bonus in order %}
+              <tr>
+                  <td>{{ bonus.id }} </td>
+                  <td>{{ bonus.total }} </td>
+                  <td>{{ bonus.status }}</td>
+                  <td><a href="{% url 'orderitemshistory' bonus.id %}"> order items </a> </td>
+              </tr>
+              {% endfor %} 
+            
+           
+            </tbody>
+          </table>
+          <tr> Total : {{ordertotal.total__sum}} </tr>
+      </div>
     </div>
   </div>
+
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+      <div class="card">
+      <div class="card-header card-header-danger">
+        <h4 class="card-title">Downline Sales</h4>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>User</th>
+              <th>Items</th>
+            </tr>
+          </thead>
+          <tbody>
+              {% for bonus in dlorder %}
+              <tr>
+                  <td>{{ bonus.id }} </td>
+                  <td>{{ bonus.total }} </td>
+                  <td>{{ bonus.status }}</td>
+                  <td>{{ bonus.user }}</td>
+                  <td><a href="{% url 'orderitemshistory' bonus.id %}"> order items </a> </td>
+              </tr>
+              {% endfor %} 
+            
+           
+          </tbody>
+        </table>
+        <tr> Total : {{dlordertotal.total__sum}} </tr>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
   
+
   
 {% endblock %}
-
+{% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+{% endblock javascripts %}
+

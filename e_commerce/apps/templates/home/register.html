@@ -3,13 +3,19 @@
 {% block title %} Login {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<style>
+  .row {
+    justify-content : center;
+  }
+</style>
+{% endblock stylesheets %}
 
 {% block content %}
 
-  <div class="row">
-    <div class="col-md-5">
-      <div class="card">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-5 ">
+      <div class="card  justify-content-center">
         <div class="card-header card-header-primary">
           <h4 class="card-title">
             Create Account
@@ -25,7 +31,7 @@
           <form role="form" action="/">
 
             <div class="row">
-              <div class="col-md-12">
+              <div class="col-md-12  ">
                 <div class="form-group">
                   <label class="bmd-label-floating">Username</label>
                   <input type="text" class="form-control" placeholder="Username">

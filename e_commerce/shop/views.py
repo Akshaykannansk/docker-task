@@ -26,8 +26,6 @@ class shop(View):
 
 
 
-
-
 def add_to_cart(request, id):
     product = Product.objects.get(id=id)
     user = request.user
@@ -62,7 +60,6 @@ def product_detail(request, id):
 def remove_cart(request, id):
     try:
         cart_item = CartItems.objects.get(product_id=id)
-        print(cart_item)
         messages.success(request, f" {cart_item.product.name} is sucessfully removed from the cart.")
         cart_item.delete()
     except Exception as e:
@@ -73,10 +70,13 @@ def remove_cart(request, id):
 
 def cart_view(request):
     user = request.user
-    user_cart = cart.objects.get(user=user)
+    try:
+        user_cart = cart.objects.get(user=user)
+    except cart.DoesNotExist:
+         return render(request, 'shop/cart.html')
+
     cart_items = user_cart.items.all()
     total_price = user_cart.get_cart_total()
-    print(cart_items)
     context = {
         'cart_items': cart_items,
         'total_price': total_price,
@@ -165,9 +165,9 @@ class CheckoutPayment(View):
                 try:
                     coupon = Coupon.objects.get(code=code)
                     if coupon.is_used:
-                        error_message = "Coupon has already been used."
+                       messages.error(request,"Coupon has already been used.")
                     elif coupon.expiration_date < timezone.now().date():
-                        error_message = "Coupon has expired."
+                       messages.error(request, "Coupon has expired.")
                     else:
                         coupon.discount_amount  -= total1
                         coupon.is_used = True
@@ -186,8 +186,8 @@ class CheckoutPayment(View):
                                 product.save()
                         return render(request, 'shop/checkout_success.html', {'order': order})
                 except Coupon.DoesNotExist:
-                    error_message = "Invalid coupon code." 
-                
+                   messages.error(request, "Invalid Coupon Code")
+                   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 if 'error_message' in locals():
                     # Display error message to the user
                     return render(request, 'shop/checkout_success.html', {'form': form, 'error_message': error_message})

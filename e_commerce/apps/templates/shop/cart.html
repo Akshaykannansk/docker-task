@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+  {% if cart_items %}
     <div class="container">
         <h1 class="my-4">My Cart</h1>
         <table class="table table-striped">
@@ -24,6 +25,7 @@
                         <td>{{ item.get_product_price }}</td>
                         <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}"> delete </a></td>
                     </tr>
+                   
                 {% endfor %}
                 <tr>
                     <td colspan="4"><strong>Total</strong></td>
@@ -34,5 +36,14 @@
         </table>
         <a href="{% url 'checkout_address' %}" class="btn btn-success float-right">Buy</a>
     </div>
+
+    {% else %}
+    <div class="container">
+        <h1 class="my-4">Cart is empty</h1> </div>
+
+        <a href ="{% url 'shop' %}" class="btn btn-success"> Go to Shop </a>
+
+        {% endif %}
+
 {% endblock %}
 

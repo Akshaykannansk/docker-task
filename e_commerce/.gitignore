@@ -1,6 +1,7 @@
 # byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.pyc
 home/__pycache__/
 authentication/__pycache__/
 shop/__pycache__/

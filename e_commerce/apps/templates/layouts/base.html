@@ -32,24 +32,25 @@
 
 <body class="">
   <div class="wrapper ">
-
+    {% if request.user.is_authenticated %}
     {% include 'includes/sidebar.html' %}
-
+    {% endif %}
     <div class="main-panel">
 
       {% include 'includes/navigation.html' %}
-
       <!-- End Navbar -->
       <div class="content">
         <div class="container-fluid">
           {% include 'includes/messages.html' %}
+        
           {% block content %}{% endblock content %}
 
         </div>
       </div>
 
-
+     
     </div>
+  
   </div>
 
   

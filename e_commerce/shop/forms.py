@@ -14,5 +14,5 @@ class payment_form(forms.Form):
     ]
         payment_type = forms.ChoiceField(
             widget=forms.RadioSelect,
-            choices=CHOICES, 
+            choices=CHOICES
         )
