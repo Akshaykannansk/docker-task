@@ -25,3 +25,5 @@ class Coupon(models.Model):
     discount_amount = models.DecimalField(max_digits=5, decimal_places=2)
     expiration_date = models.DateField()
     is_expired = models.BooleanField(default=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    transferred = models.BooleanField(default=False)
