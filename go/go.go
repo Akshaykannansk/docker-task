@@ -94,13 +94,15 @@ func badge(db *sql.DB){
 		
 		updateDynStmt := `update "shop_bonuses" set "order_total" = $1, "badge" = $2 where "user_id" = $3`
 		_, e := db.Exec(updateDynStmt, sum, b, id)
-		CheckError(e)	
-
-		fmt.Println("updating badges ....")
+		CheckError(e)
+		
+		
+		fmt.Println("go runing...")
+		
 
 	}
-}
 
+}
 func bonus(db *sql.DB){
 	totalQuery := "SELECT total ,user_id ,id FROM shop_orders WHERE calculation = 0 and user_id != '1'"
 	totalRows, err := db.Query(totalQuery)
@@ -151,15 +153,36 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	fmt.Println("sponsorbadge  :",badge)
 	Sponsor_Bonus := 0.00
 	if badge == "Bronze" {
-		Sponsor_Bonus = .02
+		Bronzerow := db.QueryRow("SELECT percentage FROM home_bonusconfig WHERE id = 1")
+
+		if err := Bronzerow.Scan(&Sponsor_Bonus); err != nil {
+			panic(err)
+		}
     }else if badge == "Silver" {
-		Sponsor_Bonus = .05	
-	}else if badge == "Gold" {
-		Sponsor_Bonus = .07    
+		Silverrow := db.QueryRow("SELECT percentage FROM home_bonusconfig WHERE id = 1")
+
+		if err := Silverrow.Scan(&Sponsor_Bonus); err != nil {
+			panic(err)
+		}
+	}else if badge == "Gold" {   
+		Goldrow := db.QueryRow("SELECT percentage FROM home_bonusconfig WHERE id = 1")
+
+		if err := Goldrow.Scan(&Sponsor_Bonus); err != nil {
+			panic(err)
+		}		
     }else if badge == "Diamond" {
-		Sponsor_Bonus = .10
+
+		Diamondrow := db.QueryRow("SELECT percentage FROM home_bonusconfig WHERE id = 1")
+
+		if err := Diamondrow.Scan(&Sponsor_Bonus); err != nil {
+			panic(err)
+		}		
 	}else if badge == "Platinum"{
-		Sponsor_Bonus = .15
+		Platinumrow := db.QueryRow("SELECT percentage FROM home_bonusconfig WHERE id = 1")
+	
+		if err := Platinumrow.Scan(&Sponsor_Bonus); err != nil {
+			panic(err)
+		}	
 	}else{
 		Sponsor_Bonus =0.00
 	}
@@ -173,7 +196,7 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	if err := walletrow.Scan(&wallet); err != nil {
 		panic(err)
 	}
-	bonus := sum*Sponsor_Bonus
+	bonus := sum*Sponsor_Bonus/100
 	wallet += bonus
 	fmt.Println("wallet =",wallet)
 	
