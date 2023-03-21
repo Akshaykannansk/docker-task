@@ -169,7 +169,6 @@ class CheckoutPayment(View):
                        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                     else:
                         coupon.discount_amount  -= total1
-                        coupon.is_used = True
                         coupon.save()
                         order = Orders.objects.filter(user=request.user).last()
                         order.status = "fullfilled"
@@ -187,9 +186,7 @@ class CheckoutPayment(View):
                 except Coupon.DoesNotExist:
                    messages.error(request, "Invalid Coupon Code")
                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-                if 'error_message' in locals():
-                    # Display error message to the user
-                    return render(request, 'shop/checkout_success.html', {'form': form, 'error_message': error_message})
+    
             else:
                 # Invalid payment type
                 error_message = "Invalid payment type."
