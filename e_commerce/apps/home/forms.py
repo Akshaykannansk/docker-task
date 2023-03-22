@@ -89,6 +89,18 @@ class ProductForm(forms.ModelForm):
             'category': forms.ModelChoiceField(queryset=product_category.objects.all())
         }
 
+class UpdateProductForm(forms.ModelForm):
+    product_category = forms.ModelChoiceField(
+        queryset=product_category.objects.all(), empty_label=None)
+
+    class Meta:
+        model = Product
+        fields = ['name', 'description', 'price',
+                   'product_category']
+        widgets = {
+            'category': forms.ModelChoiceField(queryset=product_category.objects.all())
+        }
+
 
 class productCategory(forms.ModelForm):
 
@@ -102,3 +114,14 @@ class productCategory(forms.ModelForm):
     class Meta:
         model = product_category
         fields = ['category_name']
+
+class BonusConfigForm(forms.ModelForm):
+    percentage = forms.DecimalField()
+
+    class Meta:
+        model = bonusconfig
+        widgets = {
+            'percentage': forms.NumberInput(attrs={'step': '0.25', "class": "form-control"}),
+        }
+        fields = ['percentage']
+     

@@ -50,7 +50,7 @@
                                
                                 {% comment %} <a  href="/update/{{ product.id }}/"class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
                                 {% comment %} <a href="{% url 'item_edit' product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ product.id }}">Edit</a> {% endcomment %}
-                                <a href="{% url 'item_edit' product.id %}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
+                                <button type="button" id= "edit" class="btn btn-primary" value = "{{product.id}}" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
                                 
                                   
                                
@@ -78,8 +78,97 @@
     
     
       
-</section>
-    {% endblock %}
+    <div class="modal fade " id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Product</h5>
+                    <button class="close" data-bs-dismiss="modal" aria-label="close">x</button>
+                </div>
+                <div class="modal-body overflow-scroll">
+    <form id="edit-form"  method="POST" enctype="multipart/form-data" >
+        {% csrf_token %}
+      <div class="mb-3">
+        <input type="hidden" name="id" id="editId" value="">
+        <label for="name-input" class="form-label">Name</label>
+       {{form.name}}
+       {{form.name.errors}}
+      </div>
+      <div class="mb-3">
+        <label for="category-input" class="form-label">Category</label>
+       {{form.product_category}}
+       {{form.product_category.errors}}
+      </div>
+      <div class="mb-3">
+        <label for="description-input" class="form-label">Description</label>
+        {{form.description}}
+        {{form.description.errors}}
+      </div>
+      <div class="mb-3">
+        <label for="price-input" class="form-label">Price</label>
+       {{form.price}}
+      </div>
+      <div class="mb-3">
+          <img id="image-preview" src="" alt="Image Preview" style="max-width: 200px;">
+        </div>
+        <div class="mb-3">
+          <label for="image" class="form-label">Image</label>
+          <input type="file"
+          id="avatar" name="image"
+          accept="image/png, image/jpeg">
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+    </div>
+</form>
+    </div>
+    </div>
+    </div>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+      
+    {% endblock %}
+    {% block javascripts %}
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+     $(document).ready(function() { 
+            // Attach a click event listener to the edit button
+       
+
+            $('table').on('click', '#edit', function (ele) {
+              // Get the closest table row to the button
+              var $row = $(this).closest('tr');
+              var tr = ele.target.parentNode.parentNode;
+              // Get the data from the table row
+              var name = tr.cells[0].innerHTML;
+              var category = tr.cells[1].innerHTML;
+              var description = tr.cells[2].textContent;
+              var price = tr.cells[3].innerHTML;
+              var image = $row.find('img').attr('src');
+          
+              // Set the form action to the current row's ID
+          
+              // Populate the form fields with the data from the row
+              $('#id_name').val(name);
+              var selectElement = $('#id_product_category');
+              $('#id_description').val(description);
+              $('#id_price').val(price);
+              $('#image-preview').attr('src', image);
+              $('#editId').val(ele.target.value);
+              selectElement.find('option').each(function() {
+                // check if the innerHTML of the option matches the value you want to select
+                if ($(this).html() === category) {
+                  // set the selected attribute to true
+                  $(this).prop('selected', true);
+                }
+              });
+            });
+    });
+          
+          
+    </script>
+    {% endblock %}

@@ -152,14 +152,45 @@ class ProductView(View):
     context = {}
 
     def get(self, request):
-        product = Product.objects.all()     
+        product = Product.objects.all()  
+        form = UpdateProductForm()   
         context ={
-            'products':product,
+            'products':product, 'form': form,
             'segments':'view product'
         }
         return render(request,self.template_name,context)
 
-
+    def post(self, request):
+            id = request.POST['id']
+            
+            images =request.FILES.get('image')
+            if images :
+                
+                product_id = Product.objects.get(id = id)
+            
+                form = UpdateProductForm(request.POST, request.FILES, instance = product_id)
+                if form.is_valid():
+                    product_id.image = images
+                    product_id.save()
+                    form.save()
+                    messages.success(request, 'Product updated successfully.')
+                    return redirect('product_view')   
+                else:
+                    messages.error(request, 'Error updating product.')
+                    context = {'form': form}
+                    return redirect('product_view')  
+            else: 
+                product_id = Product.objects.get(id = id)
+            
+                form = UpdateProductForm(request.POST, request.FILES, instance = product_id)
+                if form.is_valid():
+                    form.save()
+                    messages.success(request, 'Product updated successfully.')
+                    return redirect('product_view')   
+                else:
+                    messages.error(request, 'Error updating product.')
+                    context = {'form': form}
+                    return redirect('product_view') 
 
 
 def delete(request, id):
@@ -187,9 +218,6 @@ class ItemUpdateView(UpdateView):
 
 class UpdateProduct(View):
     template_name = 'home/updateproduct.html'
-
-    def get(self,request,product_id):
-        return render(request,self.template_name)
 
     # def get(self, request, product_id):
     #     product = get_object_or_404(Product, id=product_id)
@@ -280,10 +308,18 @@ class bonuscon(View):
     context ={}
     def get(self,request):
         badges = bonusconfig.objects.all().order_by('id')
+        form = BonusConfigForm()
         context ={
-            'badges' : badges
+            'badges' : badges, 'form' : form
         }
         return render(request,self.template_name,context)
+    def post(self,request):
+        id = int(request.POST['id'])
+        ids = bonusconfig.objects.get(id = id)
+        form= BonusConfigForm(request.POST, instance = ids)
+        form.save()
+        return redirect ('bonusconfig')
+
 
 
 # cart count

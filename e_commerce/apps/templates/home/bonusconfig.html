@@ -1,8 +1,6 @@
 {% extends "layouts/base.html" %}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-{% block javascripts %}
-<script src="https://unpkg.com/htmx.org@1.8.6" integrity="sha384-Bj8qm/6B+71E6FQSySofJOUjA/gq330vEqjFx9LakWybUySyI1IQHwPtbTU7bNwx" crossorigin="anonymous"></script>
-{% endblock javascripts %}  
+ 
 
 {% block content %}
 
@@ -25,21 +23,9 @@
                 <td>{{ badge.id }} </td>
                 <td>{{ badge.badge }} </td>
                 <td>{{ badge.percentage }}</td>
-                <td> <button class="btn btn-danger"
-                    hx-get="{{badge.id}}/edit"
-                    hx-trigger="edit"
-                    _="on click
-                         if .editing is not empty
-                           Swal.fire({title: 'Already Editing',
-                                      showCancelButton: true,
-                                      confirmButtonText: 'Yep, Edit This Row!',
-                                      text:'Hey!  You are already editing a row!  Do you want to cancel that edit and continue?'})
-                           if the result's isConfirmed is false
-                             halt
-                           end
-                           send cancel to .editing
-                         end
-                         trigger edit">Edit</button>
+                <td>  <button id="edit" value={{badge.id}} type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">edit
+
+                </button>
                 </td>
             </tr>
             {% endfor %} 
@@ -51,4 +37,67 @@
   </div>
 
   
+    <!-- ------------------                 Modal  for edit employee                  ------------ -- -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h3 class="modal-title fs-5" id="exampleModalLabel">Edit the details </h3>
+                  <button class="close" data-bs-dismiss="modal" aria-label="close">x</button>
+              </div>
+              <div class="modal-body">
+                  <form id="edit_form" method="POST" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                      <input type="hidden" name="id" id="editId" value="">
+                      
+                      <div class="mb-3">
+                         <label for="edit_des" class="col-form-label">Badge</label>
+                        <input type="text" name="des" class="form-control" id="edit_des" disabled>
+                         
+                      </div>
+                      <div class="mb-3">
+                        <label for="edit_dep" class="col-form-label">percentage</label>
+                        {{form.percentage}}
+                        {{form.percentage.errors}}
+                      </div>
+                      <div class= "modal-footer">
+                          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" id="edit_send" class="btn btn-primary">Submit</button>
+                      </div>
+                  </form>
+
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+  <!-- ------------------                 Modal                    ------------------ -->
 {% endblock %}
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<script> $(document).ready(function () {
+  $(function () {
+      //Take the data from the TR during the event button
+      $('table').on('click', '#edit', function (ele) {
+          //the <tr> variable is use to set the parentNode from "ele
+          var tr = ele.target.parentNode.parentNode;
+
+
+          //get the value from the cells (td) using the parentNode (var tr)
+          var id = tr.cells[0].innerHTML;
+          var badge = tr.cells[1].textContent;
+          var percentage = tr.cells[2].textContent;
+
+          //Prefill the fields with the gathered information
+          $('#edit_name').val(id);
+          $('#edit_des').val(badge);
+          $('#id_percentage').val(percentage);
+          $('#editId').val(ele.target.value);
+          console.log(ele.target.value)
+      });
+  });
+});
+</script>
+{% endblock javascripts %} 

@@ -62,9 +62,9 @@
 </section>
 {% endblock %}
 {% block javascripts%}
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-J98XJFvS8hTfQwzVoEZ1iZhjKvO8P0xetPbqrY68UOg6k+s8LSTwb5wct+t0/L95" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-J98XJFvS8hTfQwzVoEZ1iZhjKvO8P0xetPbqrY68UOg6k+s8LSTwb5wct+t0/L95" crossorigin="anonymous"></script>
 <script>
-  
 $(document).ready(function() {
   $.ajax({
     url: "{% url 'cart_count' %}",
@@ -74,7 +74,7 @@ $(document).ready(function() {
   });
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-J98XJFvS8hTfQwzVoEZ1iZhjKvO8P0xetPbqrY68UOg6k+s8LSTwb5wct+t0/L95" crossorigin="anonymous"></script>
+
 {% endblock javascripts%}
 
 
