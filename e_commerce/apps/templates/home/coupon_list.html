@@ -15,8 +15,8 @@
         <th>Code</th>
         <th>Discount Amount</th>
         <th>Expiration Date</th>
-        <th>Used</th>
         <th>Actions</th>
+
       </tr>
     </thead>
     <tbody>
@@ -24,15 +24,14 @@
         <tr>
           <td>{{ coupon.code }}</td>
           <td>{{ coupon.discount_amount }}</td>
-          <td>{{ coupon.expiration_date }}</td>
-          <td>{% if coupon.is_used %}Yes{% else %}No{% endif %}</td>
-          <td>
-            <a href="{% url 'use_coupon' coupon.id %}">Mark as Used</a>
+          <td>{{ coupon.expiration_date }}</td>         
+        
+          <td>{% if coupon.is_expired %}  <strong class ="text-danger" >EXPIRED !</strong>{% else %}  
             <a href="{% url 'delete_coupon' coupon.id %}" ><i class="fa fa-solid fa-trash fa-xl"></i></a>
-            <button onclick="copy('{{ coupon.code }}','#copy_button')" id="copy_button" ><i class="fa fa-clone "></i></button> 
-          </td>
+            <button onclick="copy('{{ coupon.code }}','#copy_button')" id="copy_button" class="mx-3"><i class="fa fa-clone "></i></button> 
+            {% endif %}</td>
         </tr>
-      {% endfor %}
+      {% endfor %}  
     </tbody>
   </table>
   </div>
