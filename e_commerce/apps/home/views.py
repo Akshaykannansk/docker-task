@@ -30,7 +30,8 @@ class DashBoard(View):
     context = {}
     def get(self, request):
         user = UserWallet.objects.get(user=request.user)
-        revenue = bonushistory.objects.filter(user_id= request.user).aggregate(Sum('bonusesamount'))
+        revenue = bonushistory.objects.filter(sponsor_id= request.user).aggregate(Sum('bonusesamount'))
+     
         expense = bonuses.objects.get(user_id= request.user)
         if expense.badge == "Bronze":
             badgeimg = "media/images/vecteezy_winner-glass-award-clipart-design-illustration_9304587_717.png"
@@ -113,15 +114,27 @@ class ProductCategoryAdd(View):
         categories = product_category.objects.all()
         context = {
             'segments':'product category', 
-            'categories': categories
+            'categories': categories,
+            'form' : productCategory(),
+            'updateform': updateproductCategory(),
             }
-        context['form'] = productCategory()
         return render(request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
-         categories = product_category.objects.all()
+         if request.POST.get('id') :
+            cat_id = int(request.POST.get('id'))
+            category = product_category.objects.get(id=cat_id)
+            updateform = updateproductCategory(request.POST, instance=category)
+            if updateform.is_valid():
+                category.category_name = request.POST.get('update_category_name','Error Name')
+                category.save()
+            print(request.POST)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
          form = productCategory(request.POST)
-         
+         print(request.POST)
+
          if form.is_valid():
             form.save() 
          return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -198,6 +211,13 @@ def delete(request, id):
   del_Product.delete()
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
+def delete_category(request, id):
+  del_Productcategory = product_category.objects.get(id=id)
+  del_Productcategory.delete()
+  return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
  
   
 class ItemUpdateView(UpdateView):
@@ -261,7 +281,7 @@ class userprofile(View):
         user_form = UpdateUserform( instance = request.user)
         profile_form = profileform(instance = request.user.profile)
         context ={
-            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser
+            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser , 'segments' : "profile"
         }
         return render(request, self.template_name, context)
     def post(self, request, *args, **kwargs):
@@ -270,7 +290,7 @@ class userprofile(View):
          currentuser = CustomUser.objects.get(username = request.user.username)
          aboutme = profile.objects.get(user=request.user)
          context ={
-            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser
+            'userform' : user_form, "profileform":profile_form, 'about':aboutme, 'current_user': currentuser ,'segments' : "profile"
         }
          
          if user_form.is_valid() and profile_form.is_valid():
@@ -310,7 +330,9 @@ class bonuscon(View):
         badges = bonusconfig.objects.all().order_by('id')
         form = BonusConfigForm()
         context ={
-            'badges' : badges, 'form' : form
+            'badges' : badges,
+            'segments' : "bonusconfig",
+            'form' : form
         }
         return render(request,self.template_name,context)
     def post(self,request):

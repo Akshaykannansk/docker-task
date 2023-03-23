@@ -40,12 +40,14 @@ def add_to_cart(request, id):
             if not created:
                 cart_item.quantity += 1
                 cart_item.save()
-        else:
-            messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
-    else:
-        messages.error(request, f"Sorry, {product.name} is currently out of stock.")
+    #     else:
+    #         messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
+    # else:
+    #     messages.error(request, f"Sorry, {product.name} is currently out of stock.")
         
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
 
 
 
@@ -109,9 +111,7 @@ class CheckoutAddress(View):
                  for item in cart_items:
                      product = Product.objects.filter(id=item.product_id).first()
                      Order_items.objects.create(order=order, product=product.name, quantity=item.quantity, price=item.get_product_price())
-                #  cart_items.delete()
-                #  product.stock -= item.quantity
-                #  product.save()
+               
         return redirect('checkout_payment')
 
 

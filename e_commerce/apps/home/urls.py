@@ -22,6 +22,7 @@ urlpatterns = [
     re_path( 'add_category/', ProductCategoryAdd.as_view(), name='add_category' ),
     # re_path(r'^.*\.*', views.pages, name='pages'), 
     path('delete/<int:id>', views.delete, name='delete'),
+    path('delete_category/<int:id>', views.delete_category, name='delete_category'),
     path('update/<int:pk>/', ItemUpdateView.as_view(), name='item_edit'),
     # path('', ItemListView.as_view(), name='item_list'),
     path('bonushistory/',bonus.as_view(),name='bonushistory'),

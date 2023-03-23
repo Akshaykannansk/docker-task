@@ -1,23 +1,25 @@
-{% extends 'shop/base.html' %}
+{% extends '../layouts/homepage.html' %}
 
 {% load static %}
 
 {% block content %}
 
-<div class="row">
-
-  <div class="col-md-4">
-    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+<div class="card pt-5">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-4">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="card-img-top">
+      </div>
+      <div class="col-md-8">
+        <h1 class="card-title">{{ product.name }}</h1>
+        <h5 class="card-subtitle mb-2 text-muted">{{ product.product_category }}</h5>
+        <p class="card-text">{{ product.description }}</p>
+        <p class="card-text">Price: ${{ product.price }}</p>
+        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">Add to Cart</a>
+      </div>
+    </div>
   </div>
-
-  <div class="col-md-4">
-    <h1>{{ product.name }}</h1>
-    <p>{{ product.product_category}}</p>
-    <p>{{ product.description }}</p>
-    <p>Price: ${{ product.price }}</p>
-    <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">Add to Cart</a>
-  </div>
-
 </div>
 
 {% endblock content %}
+

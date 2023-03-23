@@ -33,7 +33,7 @@
               <i class="material-icons">analytics</i>
             </div>
             <p class="card-category">Revenue</p>
-            <a href = "{% url 'bonushistory'  %}"><h3 class="card-title">{{ revenue.bonusesamount__sum | default:"0.00" }}</h3> </a>
+            <a href = "{% url 'bonushistory'  %}"><h3 class="card-title">{{ revenue.bonusesamount__sum  }}</h3> </a>
           </div>
           <div class="card-footer">
             <div class="stats">

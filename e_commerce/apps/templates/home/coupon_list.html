@@ -23,7 +23,7 @@
       {% for coupon in coupons %}
         <tr>
           <td>{{ coupon.code }}</td>
-          <td>{{ coupon.discount_amount }}</td>
+          <td>{%if coupon.discount_amount == 0 and  coupon.is_expired == True %} The amount is transfered to wallet {% else %} {{coupon.discount_amount }} {% endif %} </td>
           <td>{{ coupon.expiration_date }}</td>         
         
           <td>{% if coupon.is_expired %}  <strong class ="text-danger" >EXPIRED !</strong>{% else %}  

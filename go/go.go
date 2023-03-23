@@ -3,7 +3,7 @@ import (
 	"database/sql"
 	"fmt"	
 	_"github.com/lib/pq"
-	"github.com/jasonlvhit/gocron"
+	// "github.com/jasonlvhit/gocron"
 	"time"
 
 )
@@ -23,11 +23,14 @@ func main() {
 	db, err := sql.Open("postgres", psqlInfo)
 	CheckError(err)
 	defer db.Close()
-	gocron.Every(1).Second().Do(bonus, db)
-	gocron.Every(1).Second().Do(badge, db)
-	<-gocron.Start()		
+	// gocron.Every(1).Second().Do(sponsor_bonus_calculation, db)
+	// gocron.Every(1).Second().Do(badge, db)
+	// gocron.Every(1).Second().Do(bonus, db)
+	// gocron.Every(1).Second().Do(couponexpirations ,db)
+	// <-gocron.Start()		
 	// badge(db)
 	// bonus(db)
+	couponexpirations(db)
 
 	
 }
@@ -97,7 +100,7 @@ func badge(db *sql.DB){
 		CheckError(e)
 		
 		
-		fmt.Println("go runing...")
+		fmt.Println("go runing...  : checking badges" )
 		
 
 	}
@@ -225,14 +228,63 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	SupdateDynStmt := `update "wallet_userwallet" set "balance" = $1 where "user_id" = 1`
 	_, er := db.Exec(SupdateDynStmt, Swallet)
 	CheckError(er)
-
-
-
-
-
+	fmt.Println("go runing...  : sponsor_bonus_calculation" )
 
 
 }
+
+
+
+
+func couponexpirations(db *sql.DB) {
+
+
+	_, er := db.Exec(`UPDATE "wallet_coupon" SET "is_expired" = TRUE WHERE "expiration_date" < $1`, time.Now())
+	CheckError(er)
+
+
+	transferred,err := db.Query("SELECT discount_amount, id ,user_id FROM wallet_coupon WHERE is_expired = TRUE")
+	CheckError(err)
+	defer transferred.Close()
+	var coupon_amount float64
+	var id int
+	var user_id int
+	for transferred.Next() {
+		if err := transferred.Scan(&coupon_amount,&id,&user_id); err != nil {
+
+			panic(err)
+		}
+	
+		if coupon_amount > 0 {
+	
+			walletQuery := "SELECT balance FROM wallet_userwallet WHERE user_id = $1"
+			walletrow := db.QueryRow(walletQuery,user_id)
+			var wallet float64
+			if err := walletrow.Scan(&wallet); err != nil {
+				panic(err)
+			}
+			wallet += coupon_amount
+			fmt.Println("wallet =",wallet)
+	
+			_, er := db.Exec(`UPDATE "wallet_userwallet" SET "balance" = $1  WHERE user_id = $2`, wallet,user_id)
+			CheckError(er)
+	
+			_, err := db.Exec(`UPDATE "wallet_coupon" SET "discount_amount" = 0 WHERE id = $1`,id)
+			CheckError(err)
+	
+			fmt.Println("go runing...  : checking couponexpirations" )
+	
+	
+	
+		}
+
+	}	   
+
+	
+
+	
+}
+
 
 
 

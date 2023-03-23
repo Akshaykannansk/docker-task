@@ -115,6 +115,19 @@ class productCategory(forms.ModelForm):
         model = product_category
         fields = ['category_name']
 
+class updateproductCategory(forms.ModelForm):
+
+    update_category_name = forms.CharField(widget=forms.TextInput(
+        attrs={
+
+            "class": "form-control"
+        }
+    ))
+
+    class Meta:
+        model = product_category
+        fields = ['category_name']
+
 class BonusConfigForm(forms.ModelForm):
     percentage = forms.DecimalField()
 

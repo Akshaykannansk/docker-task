@@ -27,6 +27,12 @@
               <p>Coupon</p>
             </a>
           </li>
+          <li class="nav-item {% if 'userlist' in segments %} active {% endif %}">
+            <a class="nav-link" href="{% url 'userlist' %}">
+              <i class="material-icons">groups</i>
+              <p>user list</p>
+            </a>
+          </li>
           {% if request.user.is_superuser %}
           <li class="nav-item {% if 'view product' in segments %} active {% endif %}">
             <a class="nav-link" href="{% url 'product_view' %}">
@@ -34,32 +40,16 @@
               <p>Manage Products</p>  
             </a>
           </li>
-          {% endif %}
-          <li class="nav-item {% if 'userlist' in segments %} active {% endif %}">
-            <a class="nav-link" href="{% url 'userlist' %}">
-              <i class="material-icons">groups</i>
-              <p>user list</p>
-            </a>
-          </li>
-          <li class="nav-item {% if 'ui-maps' in segment %} active {% endif %}">
-            <a class="nav-link" href="/ui-maps.html">
+          <li class="nav-item {% if 'bonusconfig' in segments %} active {% endif %}">
+            <a class="nav-link" href="{% url 'bonusconfig' %}">
               <i class="material-icons">location_ons</i>
-              <p>Maps</p>
+              <p>Bonus configration</p>
             </a>
           </li>
-          <li class="nav-item {% if 'ui-notifications' in segment %} active {% endif %}">
-            <a class="nav-link" href="/ui-notifications.html">
-              <i class="material-icons">notifications</i>
-              <p>Notifications</p>
-            </a>
-          </li>
+          {% endif %}
+         
           
-          <li class="nav-item ">
-            <a class="nav-link" href="/page-rtl-support.html">
-              <i class="material-icons">language</i>
-              <p>RTL Support</p>
-            </a>
-          </li>
+    
 
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'logout' %}" >
