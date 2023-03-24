@@ -3,7 +3,7 @@ import (
 	"database/sql"
 	"fmt"	
 	_"github.com/lib/pq"
-	// "github.com/jasonlvhit/gocron"
+	"github.com/jasonlvhit/gocron"
 	"time"
 
 )
@@ -23,14 +23,14 @@ func main() {
 	db, err := sql.Open("postgres", psqlInfo)
 	CheckError(err)
 	defer db.Close()
-	// gocron.Every(1).Second().Do(sponsor_bonus_calculation, db)
-	// gocron.Every(1).Second().Do(badge, db)
-	// gocron.Every(1).Second().Do(bonus, db)
-	// gocron.Every(1).Second().Do(couponexpirations ,db)
-	// <-gocron.Start()		
+	gocron.Every(1).Second().Do(sponsor_bonus_calculation, db)
+	gocron.Every(1).Second().Do(badge, db)
+	gocron.Every(1).Second().Do(bonus, db)
+	gocron.Every(1).Second().Do(couponexpirations ,db)
+	<-gocron.Start()		
 	// badge(db)
 	// bonus(db)
-	couponexpirations(db)
+	// couponexpirations(db)
 
 	
 }
@@ -89,9 +89,7 @@ func badge(db *sql.DB){
 			b = "Diamond"
 		} else if sum >= 10000{
 			b = "Platinum"
-		}else {
-			b = "lol"
-		}
+		} 
 
 		// dynamic
 		
@@ -210,7 +208,10 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	CheckError(e)
 
 
-	insertStmt := `INSERT INTO "home_bonushistory" ("user_id", "bonusesamount" ,"sponsor_id","created_at") VALUES ($1, $2,$3,$4)`
+	insertStmt := `INSERT INTO "home_bonushistory" ("user_id", "bonusesamount", "sponsor_id", "created_at")
+	VALUES ($1, $2, $3, $4)
+	WHERE CASE WHEN $2 <> 0 THEN true ELSE false END;
+	`		
 	_, ex := db.Exec(insertStmt, id, bonus ,sponsorID,time.Now())
 	CheckError(ex)
 	
