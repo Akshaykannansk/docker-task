@@ -2,22 +2,62 @@
 
 {% block stylesheets %}
 <style>
-    .quantity__input {
-        width: 32px;
-        height: 28px;
-        margin: 0;
-        padding: 0;
-        text-align: center;
-        border-top: 2px solid #dee0ee;
-        border-bottom: 2px solid #dee0ee;
-        border-left: 1px solid #dee0ee;
-        border-right: 2px solid #dee0ee;
-        background: #fff;
-        color: #8184a1;}
+    .quantity__minus,
+.quantity__plus {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  color: #495057;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+  user-select: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+.quantity__minus:hover,
+.quantity__plus:hover {
+  background-color: #f8f9fa;
+}
+
+.quantity__input {
+  text-align: center;
+  padding: .375rem .75rem;
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+}
+
+.quantity__input:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #80bdff;
+}
+
+
+.quantity {
+    display: flex;
+    align-items: center;
+  }
+  
+  .quantity__input {
+    flex: 1;
+    max-width: 60px; /* adjust this value to your needs */
+    margin: 0 10px; /* adjust this value to your needs */
+    
+  }
      </style>
 {% endblock stylesheets %}
 {% block content %}
   {% if cart_items %}
+  <div class="card">
     <div class="container">
         {% csrf_token %}
         <h1 class="my-4">My Cart</h1>
@@ -44,11 +84,15 @@
 
 
                            <td> 
-                            <div class="quantity">
-                              <button class="quantity__minus quant">-</button>
-                              <input name="quantity" type="text" class="quantity__input" value="{{item.quantity}}" disabled>
-                              <button class="quantity__plus quant">+</button>
-                            </div>
+                            <div class="quantity input-group">
+                                <div class="input-group-prepend">
+                                  <button class="btn btn-outline-secondary quantity__minus quant" type="button">-</button>
+                                </div>
+                                <input name="quantity" type="number" class="form-control quantity__input" step="1" max="{{item.product.stock}}" value="{{item.quantity}}" disabled>
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-secondary quantity__plus quant" type="button">+</button>
+                                </div>
+                              </div>
 
                         </td>
                         <td class="subtotal">{{ item.get_product_price }}</td>
@@ -59,6 +103,7 @@
                 <tr>
                     <td colspan="4"><strong>Total</strong></td>
                     <td class="total"><strong>{{ total_price }}</strong></td>
+                    <td></td>
                 </tr>
             </tbody>
         </table>
@@ -67,18 +112,19 @@
 
     {% else %}
     <div class="container">
-        <h1 class="my-4">Cart is empty</h1> </div>
+        <h1 class="my-4">Cart is empty</h1> 
 
-        <a href ="{% url 'shop' %}" class="btn btn-success"> Go to Shop </a>
+        <a href ="{% url 'shop' %}" class="btn btn-success"> Go to Shop </a> </div>
 
         {% endif %}
-
+    </div>
 {% endblock %}
 
 {% block javascripts %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
     $(document).ready(function() {
+        /*
         const minus = $('.quantity__minus');
         const plus = $('.quantity__plus');
         const input = $('.quantity__input');
@@ -110,8 +156,8 @@
             });
             location.reload(true);
             location.reload(true);
-        });
-       /* $('.quant').click(function(e) {
+        }); */
+       $('.quant').click(function(e) {
             e.preventDefault();
             var prod_id = $(this).closest('tr').find('.prod_id').val();
             var input = $(this).closest('tr').find('.quantity__input');
@@ -124,14 +170,19 @@
             input.val(quantity);
             input.trigger('input'); // Trigger input event to update subtotal and total
             var token = $('input[name="csrfmiddlewaretoken"]').val();
-            $.ajax({
-              method: 'POST',
-              data:{'prod_id': prod_id, 'quantity': quantity, csrfmiddlewaretoken : token},
-              url: '/update_cart'
-            });
-          }); 
+           
+                $.ajax({
+                    method: 'POST',
+                    data:{'prod_id': prod_id, 'quantity': quantity, csrfmiddlewaretoken : token},
+                    url: '/update_cart',
+                    success: function() {
+                    location.reload(true);
+                    }
+                });
+            
+        }); 
 
-        $('.quantity__input').on('input', function() {
+        /*$('.quantity__input').on('input', function() {
             var quantity = parseInt($(this).val(),10)
             console.log('--------------------------------------')
             console.log('quantity:', quantity);

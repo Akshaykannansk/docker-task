@@ -63,11 +63,11 @@ def product_detail(request, id):
 
 def remove_cart(request, id):
     try:
-        cart_item = CartItems.objects.get(product_id=id)
+        cart_item = CartItems.objects.filter(product_id=id).first()
         messages.success(request, f" {cart_item.product.name} is sucessfully removed from the cart.")
         cart_item.delete()
     except Exception as e:
-        print(e,"=============================================================" ,id)
+        messages.error(request,"failed to remove cart item")
         pass
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 @method_decorator(login_required(login_url="/login/"), name='dispatch') 
