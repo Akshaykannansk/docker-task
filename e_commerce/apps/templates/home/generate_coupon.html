@@ -21,3 +21,20 @@
 </div>
 {% endblock content %}
 
+{% block javascripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.min.js"></script>
+
+<script>
+ 
+$('#text_amount').keypress(function (e) {
+  var regex = new RegExp("^[1-9]\d*$");
+  var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+  if (regex.test(str)) {
+      return true;
+  }
+
+  e.preventDefault();
+  return false;
+});
+</script> 
+{% endblock javascripts %}

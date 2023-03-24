@@ -31,6 +31,9 @@
 </head>
 
 <body class="">
+  {% include 'includes/scripts.html' %}
+  
+  {% include 'includes/scripts-sidebar.html' %}
   <div class="wrapper ">
     {% if request.user.is_authenticated %}
     {% include 'includes/sidebar.html' %}
@@ -55,9 +58,6 @@
 
   
 
-  {% include 'includes/scripts.html' %}
-
-  {% include 'includes/scripts-sidebar.html' %}
   
   <!-- Specific Page JS goes HERE  -->
   {% block javascripts %}{% endblock javascripts %}

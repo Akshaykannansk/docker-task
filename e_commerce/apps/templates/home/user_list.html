@@ -28,11 +28,10 @@
   
   <div class="table-responsive table-hover table-striped"> 
   <table class="table">
+    {% if request.user.is_superuser %}
     <thead class=" text-primary">
         <tr>
-          {% if request.user.is_superuser %}
           <th>Select</th>
-          {% endif %}
           <th>Username</th>
           <th>Email</th>
           <th>First name</th>
@@ -40,11 +39,9 @@
         </tr>
       </thead>
       <tbody>
-        {% for user in active %}
+        {% for user in adminactive %}
         <tr>
-          {% if request.user.is_superuser %}
           <td><input type="checkbox" name="user" value="{{ user.id }}"></td>
-          {% endif %}
           <td>{{ user.username }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.first_name }}</td>
@@ -52,6 +49,26 @@
         </tr>
         {% endfor %}
       </tbody>
+{% else %}
+<thead class=" text-primary">
+  <tr>
+    <th>Username</th>
+    <th>Email</th>
+    <th>First name</th>
+    <th>Last name</th>
+  </tr>
+</thead>
+<tbody>
+  {% for user in active %}
+  <tr>
+    <td>{{ user.username }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.first_name }}</td>
+    <td>{{ user.last_name }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+      {% endif %}
   </table>
   </div>
   </div>
@@ -69,30 +86,47 @@
     
     <div class="table-responsive"> 
     <table class="table">
-      <thead class=" text-primary">
-          <tr>
-            {% if request.user.is_superuser %}
-            <th>Select</th>
-            {% endif %}
-            <th>Username</th>
-            <th>Email</th>
-            <th>First name</th>
-            <th>Last name</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for user1 in blocked %}
-          <tr>
-            {% if request.user.is_superuser %}
-            <td><input type="checkbox" name="user1" value="{{ user1.id }}"></td>
-            {% endif %}
-            <td>{{ user1.username }}</td>
-            <td>{{ user1.email }}</td>
-            <td>{{ user1.first_name }}</td>
-            <td>{{ user1.last_name }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
+      {% if request.user.is_superuser %}
+    <thead class=" text-primary">
+        <tr>
+          <th>Select</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>First name</th>
+          <th>Last name</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user1 in adminblocked %}
+        <tr>
+          <td><input type="checkbox" name="user" value="{{ user1.id }}"></td>
+          <td>{{ user1.username }}</td>
+          <td>{{ user1.email }}</td>
+          <td>{{ user1.first_name }}</td>
+          <td>{{ user1.last_name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+{% else %}
+<thead class=" text-primary">
+  <tr>
+    <th>Username</th>
+    <th>Email</th>
+    <th>First name</th>
+    <th>Last name</th>
+  </tr>
+</thead>
+<tbody>
+  {% for user1 in blocked %}
+  <tr>
+    <td>{{ user1.username }}</td>
+    <td>{{ user1.email }}</td>
+    <td>{{ user1.first_name }}</td>
+    <td>{{ user1.last_name }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+      {% endif %}
     </table>
     </div>
     </div>

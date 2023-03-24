@@ -75,7 +75,6 @@ def pages(request):
 
 @login_required(login_url="/login/")
 
-
 def UserListView(request):
     if request.method == 'POST':
         # Get the list of user IDs from the form data
@@ -92,9 +91,11 @@ def UserListView(request):
         return redirect('userlist')
     
     else:
-        active = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True).exclude(id= request.user.id)
-        blocked = CustomUser.objects.filter(is_active= False).exclude(is_superuser= True)
-        context = {'active': active,'blocked': blocked, 'segments':'userlist'}    
+        adminactive = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True)
+        adminblocked = CustomUser.objects.filter(is_active= False).exclude(is_superuser= True)
+        active = CustomUser.objects.filter(sponsorname = request.user).filter(is_active= True).exclude(is_superuser= True)
+        blocked = CustomUser.objects.filter(sponsorname = request.user).filter(is_active= False).exclude(is_superuser= True)
+        context = {'active': active,'blocked': blocked, 'segments':'userlist', 'adminactive': adminactive, 'adminblocked': adminblocked}    
         return render(request, 'home/user_list.html', context)
 
 
@@ -160,6 +161,8 @@ class register_product(View):
 
 
 
+    
+@method_decorator(login_required(login_url="/login/"), name='dispatch')  
 class ProductView(View):
     template_name = 'home/view_product.html'
     context = {}
@@ -206,11 +209,15 @@ class ProductView(View):
                     return redirect('product_view') 
 
 
+@login_required(login_url="/login/")
+
 def delete(request, id):
   del_Product = Product.objects.get(id=id)
   del_Product.delete()
   return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+
+@login_required(login_url="/login/")
 
 def delete_category(request, id):
   del_Productcategory = product_category.objects.get(id=id)
@@ -219,7 +226,9 @@ def delete_category(request, id):
 
 
  
-  
+ 
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
+ 
 class ItemUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
@@ -236,28 +245,8 @@ class ItemUpdateView(UpdateView):
 
 
 
-class UpdateProduct(View):
-    template_name = 'home/updateproduct.html'
 
-    # def get(self, request, product_id):
-    #     product = get_object_or_404(Product, id=product_id)
-    #     form = ProductForm(instance=product)
-    #     context = {'form': form, 'product': product}
-    #     return render(request, self.template_name, context)
-
-    # def post(self, request, product_id):
-    #     product = get_object_or_404(Product, id=product_id)
-    #     form = ProductForm(request.POST, request.FILES, instance=product)
-    #     if form.is_valid():
-    #         form.save()
-    #         messages.success(request, 'Product updated successfully.')
-    #         return redirect('product_list')
-    #     else:
-    #         messages.error(request, 'Error updating product.')
-    #         context = {'form': form, 'product': product}
-    #         return render(request, self.template_name, context) 
-
-
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 
 class bonus(View):
     template_name = "home/bonushistory.html"
@@ -271,6 +260,8 @@ class bonus(View):
         }
         return render(request, self.template_name, context)
     
+
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 
 class userprofile(View):
     template_name = "home/profile.html"
@@ -301,6 +292,8 @@ class userprofile(View):
     
 
 
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
+
 class OrderHistoryView (View):
     template_name = "home/orderhistory.html"
     context ={}
@@ -312,7 +305,9 @@ class OrderHistoryView (View):
         context = {'order': orders,'dlorder':dlorders, 'ordertotal': ordertotal, 'dlordertotal': dlordertotal}
         return render(request, self.template_name, context)
 
-    
+ 
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
+   
 class OrderItemsHistoryView (View):
     template_name = "home/orderitemshistory.html"
     context ={}
@@ -322,6 +317,8 @@ class OrderItemsHistoryView (View):
         context = {'orderitems': orders, 'ordertotal' : ordertotal}
         return render(request, self.template_name, context)
 
+
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 
 class bonuscon(View):
     template_name = "home/bonusconfig.html"
@@ -346,6 +343,8 @@ class bonuscon(View):
 
 # cart count
 
+
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 
 class cartCount(View):
     def get(self, request):

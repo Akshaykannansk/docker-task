@@ -1,5 +1,7 @@
 from audioop import reverse
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.shortcuts import render , redirect
 from django.views import View
 from apps.home.models import Product
@@ -11,7 +13,7 @@ from django.contrib import messages
 from django.utils import timezone
 from decimal import Decimal
 
-
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 # Create your views here.
 class shop(View):
     template_name = 'shop/product_list.html'
@@ -25,7 +27,7 @@ class shop(View):
         return render(request,self.template_name,context)
 
 
-
+@login_required(login_url="/login/")
 def add_to_cart(request, id):
     product = Product.objects.get(id=id)
     user = request.user
@@ -52,7 +54,7 @@ def add_to_cart(request, id):
 
 
 
-
+@login_required(login_url="/login/")
 def product_detail(request, id):
     products = Product.objects.get(id=id)
     context = {'product': products}
@@ -68,25 +70,37 @@ def remove_cart(request, id):
         print(e,"=============================================================" ,id)
         pass
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
+class cart_view(View):
+    def get(self,request):
+        user = request.user
+        try:
+            user_cart = cart.objects.get(user=user)
+        except cart.DoesNotExist:
+            return render(request, 'shop/cart.html')
+
+        cart_items = user_cart.items.all()
+        total_price = user_cart.get_cart_total()
+        context = {
+            'cart_items': cart_items,
+            'total_price': total_price,
+        }
+        return render(request, 'shop/cart.html', context)
 
 
-def cart_view(request):
-    user = request.user
-    try:
-        user_cart = cart.objects.get(user=user)
-    except cart.DoesNotExist:
-         return render(request, 'shop/cart.html')
+@login_required(login_url="/login/")
 
-    cart_items = user_cart.items.all()
-    total_price = user_cart.get_cart_total()
-    context = {
-        'cart_items': cart_items,
-        'total_price': total_price,
-    }
-    return render(request, 'shop/cart.html', context)
+def UpdateCart(request):
+    if request.method == 'POST':
 
+        prod_id = int(request.POST.get('prod_id'))
+        quantity = int (request.POST.get('quantity'))
+        user_cart = cart.objects.get(user=request.user)
+        user_cart.items.filter(product=prod_id).update(quantity=quantity)
+    return redirect('cart')
+        
 
-
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 class CheckoutAddress(View):
     template_name ='shop/checkout_address.html'
     context = {}
@@ -115,7 +129,7 @@ class CheckoutAddress(View):
         return redirect('checkout_payment')
 
 
-
+@method_decorator(login_required(login_url="/login/"), name='dispatch') 
 class CheckoutPayment(View):
     template_name ='shop/checkout_payment.html'
     context = {}

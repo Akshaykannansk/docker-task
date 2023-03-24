@@ -16,3 +16,11 @@ class payment_form(forms.Form):
             widget=forms.RadioSelect,
             choices=CHOICES
         )
+
+class updatecartform(forms.ModelForm):
+       quantity = forms.IntegerField
+
+       class Meta:
+              model = CartItems
+              fields = ['quantity']
+       
