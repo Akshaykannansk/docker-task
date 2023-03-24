@@ -104,8 +104,18 @@ def UpdateCart(request):
 class CheckoutAddress(View):
     template_name ='shop/checkout_address.html'
     context = {}
+    
     def get(self, request, *args, **kwargs):
-        context ={ 'form' : address_form()}
+        user = request.user
+        user_cart = cart.objects.get(user=user)
+        cart_items = user_cart.items.all()
+        total_price = user_cart.get_cart_total()
+        context = {
+            'cart_items': cart_items,
+            'total_price': total_price,
+            'form' : address_form()
+        }
+
         return render(request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
@@ -136,13 +146,20 @@ class CheckoutPayment(View):
     wallet = UserWallet.objects.all()
 
     def get(self, request, *args, **kwargs):
+        user = request.user
+        user_cart = cart.objects.get(user=user)
+        cart_items = user_cart.items.all()
+        total_price = user_cart.get_cart_total()
+
         total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
         wallet = UserWallet.objects.get(user=request.user).balance
         walletbalance = wallet - total1
         context = {
             'form' : payment_form(),
             'wallet' : wallet,
-            'balance' : walletbalance
+            'balance' : walletbalance,
+            'cart_items': cart_items,
+            'total_price': total_price,
         }
         return render(request, self.template_name, context)
 

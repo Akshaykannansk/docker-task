@@ -19,13 +19,16 @@ def FundDeposit(request):
            userget = UserWallet.objects.get(user= senderUser)
            userget.balance += Decimal(amount)
            
+           
+           
            userget.save()
            messages.success(request, "Fund successfully added")
            return redirect ('home')
        except Exception as e:
            messages.error(request, "Failed to deposit Fund")
            return render(request,'home/fund-deposit.html')
-    return render(request,'home/fund-deposit.html')       
+    context = { 'segment': 'index'}
+    return render(request,'home/fund-deposit.html',context)       
 
 #          -------------------------------------- coupon generation function -----------------------------------
 
@@ -53,8 +56,8 @@ def GenerateCoupons(request):
         except Exception as e:
              messages.error(request, "Enter a valid amount")
              return render(request, 'home/generate_coupon.html')
-
-    return render(request, 'home/generate_coupon.html')
+    context = { 'segments': 'coupon'}
+    return render(request, 'home/generate_coupon.html',context)
 
 
 @login_required(login_url="/login/")

@@ -3,6 +3,42 @@
 {% block title %} Payment {% endblock %}
 
 {% block content %}
+<div class="row">
+  <div class="col-md-4">
+      <div class="card">
+          <div class="card-body">
+            <h3 class="my-2">Order summary </h3>
+              <table class="table table-borderless">
+                  <thead>
+                      <tr>
+                          <th>Product</th>
+                          <th>Price</th>
+                          <th>Quantity</th>
+                          <th>Subtotal</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for item in cart_items %}
+                          <tr>
+                            <input type="hidden"  value="{{ item.product.id }}" class="prod_id">
+                                <td>{{ item.product.name }}</td>
+                                <td >{{ item.product.price }}</td>
+                                <td >{{ item.quantity }}</td>
+                                <td class="subtotal">{{ item.get_product_price }}</td>
+                          </tr>
+
+                      {% endfor %}
+                      <tr>
+                          <td colspan="3"><strong>Total</strong></td>
+                          <td class="total"><strong>{{ total_price }}</strong></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+
+<div class="col-md-8">
 <div class="card">
   <div class="card-header">Payment</div>
   <div class="card-body">
@@ -22,7 +58,23 @@
     <div class="text-danger mt-3">{{ error_message }}</div>
   </div>
 </div>
+</div>
+</div>
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {% block javascripts %}
 <script>

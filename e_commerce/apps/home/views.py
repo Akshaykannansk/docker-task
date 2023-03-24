@@ -114,7 +114,7 @@ class ProductCategoryAdd(View):
     def get(self, request, *args, **kwargs):
         categories = product_category.objects.all()
         context = {
-            'segments':'product category', 
+            'segments':'view product', 
             'categories': categories,
             'form' : productCategory(),
             'updateform': updateproductCategory(),
@@ -144,7 +144,7 @@ class ProductCategoryAdd(View):
 @method_decorator(login_required(login_url="/login/"), name='dispatch')  
 class register_product(View):
     template_name = 'home/register_product.html'
-    context = {'segments':'register product'}
+    context = {'segments':'view product', }
 
 
     def get(self, request, *args, **kwargs):
@@ -256,7 +256,8 @@ class bonus(View):
         userbonus = bonushistory.objects.filter(sponsor_id =request.user)
         context = {
             'bonus' : bonus,
-            'userbonus' : userbonus
+            'userbonus' : userbonus,
+            'segment' : "index"
         }
         return render(request, self.template_name, context)
     
@@ -302,7 +303,7 @@ class OrderHistoryView (View):
         dlorders = Orders.objects.filter(user_id__sponsorname = request.user)
         ordertotal = orders.aggregate(Sum('total'))
         dlordertotal = dlorders.aggregate(Sum('total'))
-        context = {'order': orders,'dlorder':dlorders, 'ordertotal': ordertotal, 'dlordertotal': dlordertotal}
+        context = {'order': orders,'dlorder':dlorders, 'ordertotal': ordertotal, 'dlordertotal': dlordertotal ,'segment' : "index"}
         return render(request, self.template_name, context)
 
  
@@ -314,7 +315,7 @@ class OrderItemsHistoryView (View):
     def get(self,request, id):
         orders = Order_items.objects.filter(order_id = id)
         ordertotal = orders.aggregate(Sum('price'))
-        context = {'orderitems': orders, 'ordertotal' : ordertotal}
+        context = {'orderitems': orders, 'ordertotal' : ordertotal ,'segments' : "profile"}
         return render(request, self.template_name, context)
 
 
