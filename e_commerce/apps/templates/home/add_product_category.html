@@ -8,9 +8,11 @@
 
 
 {% block content %}
-<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+<div class="d-flex flex-row-reverse">
+<button class="btn btn-primary " type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
   Add category
 </button>
+</div>
 <div class="collapse" id="collapseExample">
   <div class="card card-body">
     <form role="form" method="post" action="">
@@ -31,6 +33,9 @@
 </div>             
    
 <div class="card"> 
+  <div class="card-header card-header-success">
+    <h4 class="card-title">Category List</h4>
+  </div>
     
     <div class="table-responsive"> 
     <table class="table">

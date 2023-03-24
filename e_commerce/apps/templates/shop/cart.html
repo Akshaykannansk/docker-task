@@ -21,7 +21,17 @@
                         <td>{{ item.product.name }}</td>
                         <td>{{ item.product.description }}</td>
                         <td>{{ item.product.price }}</td>
-                        <td>  <input type="number" step="1" max="{{item.product.stock}}" min ="1" value="{{ item.quantity }}" name="quantity" class="quantity-field border-0 text-center w-25"></td>
+                        {% comment %} <td>  <input type="number" step="1" max="{{item.product.stock}}" min ="1" value="{{ item.quantity }}" name="quantity" class="quantity-field border-0 text-center w-25"></td> {% endcomment %}
+                        <td>
+
+ 
+                            <div class="container">
+                            <input type="button" onclick="decrementValue()" value="-" />
+                            <input type="text" name="quantity" value="{{ item.quantity }}" maxlength="2" max="{{item.product.stock}}" size="1" id="number" />
+                            <input type="button" onclick="incrementValue()" value="+" />
+                            </div>
+                            
+                            </td>
                         <td>{{ item.get_product_price }}</td>
                         <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}"> delete </a></td>
                     </tr>
