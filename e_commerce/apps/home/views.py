@@ -31,6 +31,13 @@ class DashBoard(View):
     def get(self, request):
         user = UserWallet.objects.get(user=request.user)
         revenue = bonushistory.objects.filter(sponsor_id= request.user).aggregate(Sum('bonusesamount'))
+        adminactive = CustomUser.objects.filter(is_active= True).exclude(is_superuser= True)
+        active = CustomUser.objects.filter(sponsorname = request.user).filter(is_active= True).exclude(is_superuser= True)  
+        bonus = bonushistory.objects.all()       
+        userbonus = bonushistory.objects.filter(sponsor_id =request.user)
+        context = {
+      
+        }
      
         expense = bonuses.objects.get(user_id= request.user)
         if expense.badge == "Bronze":
@@ -42,7 +49,8 @@ class DashBoard(View):
         else:
             badgeimg = "media/images/freebadge.png"
 
-        context = {'segment': 'index', 'balance': user.balance,'revenue': revenue, 'expense' : expense, 'badge': badgeimg }
+        context = {'segment': 'index', 'balance': user.balance,'revenue': revenue, 'expense' : expense, 'badge': badgeimg , 'active': active,  'adminactive': adminactive ,      'bonus' : bonus,
+            'userbonus' : userbonus,}
         return render (request, self.template_name, context)
 
 @login_required(login_url="/login/")
