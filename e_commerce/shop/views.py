@@ -110,10 +110,15 @@ class CheckoutAddress(View):
         user_cart = cart.objects.get(user=user)
         cart_items = user_cart.items.all()
         total_price = user_cart.get_cart_total()
+        address_id = address.objects.filter(user=request.user).first()
+        if address_id:
+            form =  address_form(instance = address_id)
+        else: 
+            form =  address_form
         context = {
             'cart_items': cart_items,
             'total_price': total_price,
-            'form' : address_form()
+            'form' : form
         }
 
         return render(request, self.template_name, context)
@@ -121,13 +126,13 @@ class CheckoutAddress(View):
     def post(self, request, *args, **kwargs):
         form = address_form(request.POST)
         if form.is_valid():
-             address = form.save(commit=False)
-             address.user = request.user
-             address.save()
+             addres = form.save(commit=False)
+             addres.user = request.user
+             addres.save()
              total1 = cart.objects.filter(user=request.user).values_list('total', flat=True).first()
                 
 
-             order = Orders.objects.create(user=request.user, address=address, total = total1 )
+             order = Orders.objects.create(user=request.user, address=addres, total = total1 )
              if request.user.cart:
                  cart_id = request.user.cart.values('id').first()['id']
                  cart_items = CartItems.objects.filter(cart_id = cart_id).all()

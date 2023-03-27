@@ -64,8 +64,8 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Product</th>
-                    <th>Description</th>
+                  <th>Product</th>
+                  <th>image</th>
                     <th>Price</th>
                     <th>Quantity</th>
                     <th>Subtotal</th>
@@ -77,8 +77,8 @@
                 {% for item in cart_items %}
                     <tr>
                       <input type="hidden"  value="{{ item.product.id }}" class="prod_id">
-                        <td>{{ item.product.name }}</td>
-                        <td>{{ item.product.description }}</td>
+                      <td>{{ item.product.name }}</td>
+                      <td><img src="/media/{{ item.product.image }}" width="80" alt="image is not found"></td>
                         <td >{{ item.product.price }}</td>
                         {% comment %} <td>  <input type="number" step="1" max="{{item.product.stock}}" min ="1" value="{{ item.quantity }}" name="quantity" class="quantity-field border-0 text-center w-25"></td> {% endcomment %}
 
@@ -121,7 +121,7 @@
 {% endblock %}
 
 {% block javascripts %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> {% endcomment %}
 <script>
     $(document).ready(function() {
         /*

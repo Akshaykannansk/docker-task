@@ -15,10 +15,11 @@ class UpdateUserform(forms.ModelForm):
                 "class": "form-control"
             }
         ))
-    username = forms.CharField(
+    username = forms.CharField(disabled=True,
         widget=forms.TextInput(
             attrs={
                 "class": "form-control"
+                
             }
         ))
     email = forms.EmailField(
