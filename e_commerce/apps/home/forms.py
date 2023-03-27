@@ -96,7 +96,7 @@ class UpdateProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ['name', 'description', 'price',
+        fields = ['name', 'description', 'price','stock',
                    'product_category']
         widgets = {
             'category': forms.ModelChoiceField(queryset=product_category.objects.all())

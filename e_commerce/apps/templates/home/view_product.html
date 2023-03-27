@@ -30,6 +30,7 @@
                             <th>Name</th>
                             <th>Category</th>
                             <th>Description</th>
+                            <th>Stock</th>
                             <th>Price</th>
                             <th>Image</th>
                             <th>Action</th>
@@ -41,7 +42,9 @@
                             <td>{{ product.name }}</td>
                             <td>{{ product.product_category.category_name }}</td>
                             <td>{{ product.description }}</td>
+                            <td> {{product.stock}}</td>
                             <td>{{ product.price }}</td>
+
                             <td><img src="/media/{{ product.image }}" class="img-thumbnail" style="width:100px;"></td>
                             <td>
                                 <a href="/delete/{{ product.id }}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
@@ -103,6 +106,10 @@
         {{form.description.errors}}
       </div>
       <div class="mb-3">
+        <label for="price-input" class="form-label">Stock</label>
+       {{form.stock}}
+      </div>
+      <div class="mb-3">
         <label for="price-input" class="form-label">Price</label>
        {{form.price}}
       </div>
@@ -145,7 +152,9 @@
               var name = tr.cells[0].innerHTML;
               var category = tr.cells[1].innerHTML;
               var description = tr.cells[2].textContent;
-              var price = tr.cells[3].innerHTML;
+              var stock = tr.cells[3].innerHTML;
+              console.log("typeof",typeof stock)
+              var price = tr.cells[4].innerHTML;
               var image = $row.find('img').attr('src');
           
               // Set the form action to the current row's ID
@@ -154,6 +163,10 @@
               $('#id_name').val(name);
               var selectElement = $('#id_product_category');
               $('#id_description').val(description);
+              console.log(stock,"stock")
+              stock = parseInt(stock)
+              $('#id_stock').val(stock);
+              console.log($('#id_stock').val(stock),"ststockock")
               $('#id_price').val(price);
               $('#image-preview').attr('src', image);
               $('#editId').val(ele.target.value);

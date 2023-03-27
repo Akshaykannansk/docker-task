@@ -1,4 +1,5 @@
 from audioop import reverse
+from django.db import DataError
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -42,10 +43,10 @@ def add_to_cart(request, id):
             if not created:
                 cart_item.quantity += 1
                 cart_item.save()
-    #     else:
-    #         messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
-    # else:
-    #     messages.error(request, f"Sorry, {product.name} is currently out of stock.")
+        else:
+            messages.error(request, f"Sorry, the stock for {product.name} is currently insufficient.")
+    else:
+        messages.error(request, f"Sorry, {product.name} is currently out of stock.")
         
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -78,13 +79,18 @@ class cart_view(View):
             user_cart = cart.objects.get(user=user)
         except cart.DoesNotExist:
             return render(request, 'shop/cart.html')
+        try:
 
-        cart_items = user_cart.items.all()
-        total_price = user_cart.get_cart_total()
-        context = {
-            'cart_items': cart_items,
-            'total_price': total_price,
-        }
+            cart_items = user_cart.items.all()
+            total_price = user_cart.get_cart_total()
+
+            context = {
+                'cart_items': cart_items,
+                'total_price': total_price,
+            }
+        except DataError:
+            messages.error(request,"Numeric value exceeded the limit")
+            return render(request, 'shop/cart.html', context)
         return render(request, 'shop/cart.html', context)
 
 
@@ -92,12 +98,17 @@ class cart_view(View):
 
 def UpdateCart(request):
     if request.method == 'POST':
-
-        prod_id = int(request.POST.get('prod_id'))
-        quantity = int (request.POST.get('quantity'))
-        user_cart = cart.objects.get(user=request.user)
-        user_cart.items.filter(product=prod_id).update(quantity=quantity)
+        try:
+            prod_id = int(request.POST.get('prod_id'))
+            quantity = int (request.POST.get('quantity'))
+            user_cart = cart.objects.get(user=request.user)
+            user_cart.items.filter(product=prod_id).update(quantity=quantity)
+            return redirect('cart')
+        except Exception as e:
+            messages.error(request, "an error occured while updating cart")
     return redirect('cart')
+    
+      
         
 
 @method_decorator(login_required(login_url="/login/"), name='dispatch') 

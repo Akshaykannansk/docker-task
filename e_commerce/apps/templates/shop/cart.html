@@ -96,7 +96,7 @@
 
                         </td>
                         <td class="subtotal">{{ item.get_product_price }}</td>
-                        <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}"> delete </a></td>
+                        <td><a  class="btn btn-danger" href="{% url 'remove_cart' item.product.id %}" onclick="return confirm('Are you sure you want to remove this from cart?')"> delete </a></td>
                     </tr>
 
                 {% endfor %}

@@ -20,7 +20,7 @@ class address(models.Model):
 class cart(models.Model):
     user = models.ForeignKey(CustomUser , on_delete=models.CASCADE, related_name='cart')
     is_paid = models.BooleanField(default=False)
-    total = models.DecimalField(default=0, decimal_places=2, max_digits=10)
+    total = models.DecimalField(default=0, decimal_places=2, max_digits=50)
 
     def get_cart_total(self): 
         cart_items = self.items.all()
