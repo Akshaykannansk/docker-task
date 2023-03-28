@@ -344,8 +344,11 @@ class bonuscon(View):
     def post(self,request):
         id = int(request.POST['id'])
         ids = bonusconfig.objects.get(id = id)
-        form= BonusConfigForm(request.POST, instance = ids)
-        form.save()
+        try: 
+            form= BonusConfigForm(request.POST, instance = ids)
+            form.save()
+        except Exception as e:
+            messages.error(request, "enter valid percentage for bonus")
         return redirect ('bonusconfig')
 
 

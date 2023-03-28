@@ -130,7 +130,7 @@ class updateproductCategory(forms.ModelForm):
         fields = ['category_name']
 
 class BonusConfigForm(forms.ModelForm):
-    percentage = forms.DecimalField()
+    percentage = forms.DecimalField(max_digits=4, decimal_places=2)
 
     class Meta:
         model = bonusconfig

@@ -62,7 +62,7 @@ class profile(models.Model):
 
 class bonusconfig(models.Model):
     badge = models.CharField(max_length=10)
-    percentage = models.DecimalField( max_digits=5, decimal_places=2)
+    percentage = models.DecimalField( max_digits=4, decimal_places=2)
 
 
 
