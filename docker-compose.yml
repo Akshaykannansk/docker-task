@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  web:
+      build: ./e_commerce
+      command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+      volumes:
+        - .:/code
+      ports:
+        - "8000:8000"
+      environment:
+        - POSTGRES_NAME=django1
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=psql
+      networks: 
+        - web_network
+      depends_on:
+        - db
+
+  go:
+    build: ./go
+    ports:
+        - "8001:8080"
+    networks: 
+        - web_network
+    depends_on:
+        - db    
+  db:
+    image: postgres:14.1-alpine
+    container_name: postgres_db
+    restart: always
+    environment:
+      - POSTGRES_DB=django1
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=psql
+    ports:
+      - "5433:5432"
+    
+    networks:
+      - web_network
+  adminer: 
+   image: adminer
+   restart: always
+   ports:
+      - 8080:8081
+   networks: 
+      - web_network
+   depends_on: 
+      - db
+        
+
+
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
+ 
