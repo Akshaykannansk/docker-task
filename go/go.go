@@ -207,13 +207,12 @@ func sponsor_bonus_calculation(sum float64,id int ,db *sql.DB) {
 	_, e := db.Exec(updateDynStmt, wallet, sponsorID)
 	CheckError(e)
 
-
+	if bonus != 0{
 	insertStmt := `INSERT INTO "home_bonushistory" ("user_id", "bonusesamount", "sponsor_id", "created_at")
-	VALUES ($1, $2, $3, $4)
-	WHERE CASE WHEN $2 <> 0 THEN true ELSE false END;
-	`		
+	VALUES ($1, $2, $3, $4);`		
 	_, ex := db.Exec(insertStmt, id, bonus ,sponsorID,time.Now())
 	CheckError(ex)
+	}
 	
 
 
