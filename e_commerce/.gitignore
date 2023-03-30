@@ -1,11 +1,11 @@
 # byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__/*
 *.py[cod]
 *.pyc
-apps/home/__pycache__/
-apps/authentication/__pycache__/
-shop/__pycache__/
-wallet/__pycache__/
+apps/home/__pycache__/*
+apps/authentication/__pycache__/*
+shop/__pycache__/*
+wallet/__pycache__/*
 # tests and coverage
 *.pytest_cache
 .coverage
@@ -24,10 +24,10 @@ venv
 
 # javascript
 package-lock.json
-apps/home/migrations/
-apps/authentication/migrations/
-apps/wallet/migrations/
-apps/shop/migrations/
+apps/home/migrations/*
+apps/authentication/migrations/*
+apps/wallet/migrations/*
+apps/shop/migrations/*
 staticfiles/*
 !staticfiles/.gitkeep 
 .vscode/symbols.json
@@ -35,4 +35,4 @@ staticfiles/*
 apps/static/assets/node_modules
 apps/static/assets/yarn.lock
 apps/static/assets/.temp
-
+postgres-data
