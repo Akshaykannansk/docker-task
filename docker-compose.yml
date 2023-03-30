@@ -5,6 +5,7 @@ services:
       command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
       volumes:
         - .:/code
+        - django-media:/e_commerce/core/media/images
       ports:
         - "8000:8000"
       environment:
@@ -35,7 +36,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     
     networks:
       - web_network
@@ -52,10 +53,11 @@ services:
 
 
 networks:
-  db_network:
-    driver: bridge
   web_network:
     driver: bridge
 volumes:
-  myapp:
-    external: true
+  postgres-data:
+    driver: local
+  django-media:
+    driver: local
+    
